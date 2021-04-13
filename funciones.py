@@ -31,14 +31,38 @@ class funciones():
             else:
                 print('\t' * (indent+1) + str(value))
 
+    def getDumpJson(self, dictionary):
+        """
+        REtorna el dump de un diccionario para ser impreso en formato JSON
+        dictionary: el diccionario para ser droppeado
+        """
+        return json.dumps(dictionary, indent=2, default=str)
+
+    def removerPalabraSingle(self, string, palabra):
+        """
+        Remueve la palabra del string y los espacios extra que contenga el string. 
+        Útil si la linea solamente tiene dos valores. Como:
+        COMPILER AdaCS
+        Nos retorna: AdaCS
+        """
+        string = string.replace(str(palabra), "")
+        newString = string.replace(" ", "")
+        return newString
+
     def isOperand(self, ch):
         """
         REtorna TRUE si el caracter ingresado es un alfanumerico, FALSE de lo contrario
         *@param ch: el caracter a ser probado
         """
-        if ch.isalnum() or ch == "ε" or ch == "#":
+        if ch.isalnum() or ch == "ε" or ch == '"':
             return True
         return False
 
-    def getDumpJson(self, dictionary):
-        return json.dumps(dictionary, indent=2, default=str)
+    def is_op(self, a):
+        """
+        Testeamos si el caracter de entrada es un operando
+        *@param a: caracter a ser probado
+        """
+        if a == '+' or a == '-':
+            return True
+        return False
