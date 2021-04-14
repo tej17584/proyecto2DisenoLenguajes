@@ -140,16 +140,19 @@ class Conversion:
         for i in expresion:
             # si no es un entero, entonces es un operando
             if(self.funciones.is_op(i)):
-                val1 = set(self.pop2().replace('"', ''))
-                val2 = set(self.pop2().replace('"', ''))
 
-                # print(type(val1))
-                # print(type(val2))
-                # print(val1)
-                # print(val2)
-                # hacemos un switch para saber cual operacion es cual
-                switcher = {'+': val2 | val1, '-': val2.difference(val1)}
-                self.push2(switcher.get(i))
+                val1 = set(self.pop2())
+                val2 = set(self.pop2())
+                if(('"' in val1) and ('"' in val2)):
+                    # print(type(val1))
+                    # print(type(val2))
+                    # print(val1)
+                    # print(val2)
+                    # hacemos un switch para saber cual operacion es cual
+                    switcher = {'+': val2 | val1, '-': val2.difference(val1)}
+                    self.push2(switcher.get(i))
+                else:
+                    return "NO_OPERABLE"
             else:
                 for x in i:
                     if(self.funciones.isOperand(x)):
@@ -158,7 +161,7 @@ class Conversion:
                 self.push2(local)
                 local = ""
 
-        return ''.join(self.pop2())
+        return '"'+(''.join(self.pop2()))+'"'
 
 
 # Probamos la funcionalidad

@@ -128,24 +128,29 @@ class Reader:
                         self.jsonFinal["CHARACTERS"].update(localDictChar)
 
                     # verificamos si existe
-                    if('+' in charValue):
+                    if('+' in charValue or '-' in charValue):
                         localEvaluador2 = Conversion()
                         charValue2 = charValue.replace('.', "")
                         postfixCharValue = localEvaluador2.infixToPostfix(
                             charValue2)
+
                         postfixCharValue = postfixCharValue.split(' ')
                         operatedCharValue = localEvaluador2.operatePostFix(
                             postfixCharValue)
-                        charValue = self.funciones.sortString(
-                            operatedCharValue)
-                        # print(charValue)
-                        localDictChar[charName] = charValue
-                        self.jsonFinal["CHARACTERS"].update(localDictChar)
+                        if(operatedCharValue != "NO_OPERABLE"):
+                            operatedCharValue = operatedCharValue.replace(
+                                '"', '')
+                            charValue = self.funciones.sortString(
+                                operatedCharValue)
+                            charValue = '"'+charValue+'"'+'.'
+                            # print(charValue)
+                            localDictChar[charName] = charValue
+                            self.jsonFinal["CHARACTERS"].update(localDictChar)
 
                     localDictChar[charName] = charValue
                     self.jsonFinal["CHARACTERS"].update(localDictChar)
 
-        pp(self.jsonFinal)
+        print(self.jsonFinal)
         #print("Nombre compilador: "+self.nombreCompilador)
         # pp(self.lineasPalabras)
 
