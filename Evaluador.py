@@ -145,8 +145,8 @@ class Conversion:
 
                 # print(type(val1))
                 # print(type(val2))
-                print(val1)
-                print(val2)
+                # print(val1)
+                # print(val2)
                 # hacemos un switch para saber cual operacion es cual
                 switcher = {'+': val2 | val1, '-': val2.difference(val1)}
                 self.push2(switcher.get(i))

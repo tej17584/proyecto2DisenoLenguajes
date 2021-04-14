@@ -49,9 +49,9 @@ class Reader:
             for x, y in valor.items():
                 for valorCaracter in character:
                     if(x == valorCaracter and llave == "CHARACTERS"):
-                        return True, y
+                        return True, y, valorCaracter
 
-        return False, []
+        return False, [], ""
 
     def readDocument(self):
         """
@@ -110,26 +110,42 @@ class Reader:
 
             if(self.isChar):
                 # hacemos split con el '=', esto es un ARRAY
-                #charSplit = line.split("=")
-                d = "="
-                for lines in line:
-                    charSplit = [e+d for e in lines.split(d) if e]
+                charSplit = line.split("=")
                 if(type(charSplit) != None and len(charSplit) > 1 and charSplit[0] != "CHARACTERS"):
                     localDictChar = {}
                     charName = str(charSplit[0].replace(" ", ""))
                     charValue = charSplit[1]
                     # extramos los valores unicos la
-                    arrayCharValue = charValue.split(" ")
-                    valor, array = self.checkIfCharExists(arrayCharValue)
-                    print(valor)
-                    print("El array", array)
+                    localEvaluador = Conversion()
+                    arrayCharValue = localEvaluador.infixToPostfix(charValue)
+                    arrayCharValue = arrayCharValue.split(' ')
+                    charExists, array, valorCaracter = self.checkIfCharExists(
+                        arrayCharValue)
+                    if(charExists and len(valorCaracter) > 0 and len(array) > 0):
+                        array = array.replace('.', '')
+                        charValue = charValue.replace(valorCaracter, array)
+                        localDictChar[charName] = charValue
+                        self.jsonFinal["CHARACTERS"].update(localDictChar)
+
                     # verificamos si existe
-                    # if("+" in charValue and '"+"' not in charValue):
-                    # self.evaluador.
+                    if('+' in charValue):
+                        localEvaluador2 = Conversion()
+                        charValue2 = charValue.replace('.', "")
+                        postfixCharValue = localEvaluador2.infixToPostfix(
+                            charValue2)
+                        postfixCharValue = postfixCharValue.split(' ')
+                        operatedCharValue = localEvaluador2.operatePostFix(
+                            postfixCharValue)
+                        charValue = self.funciones.sortString(
+                            operatedCharValue)
+                        # print(charValue)
+                        localDictChar[charName] = charValue
+                        self.jsonFinal["CHARACTERS"].update(localDictChar)
+
                     localDictChar[charName] = charValue
                     self.jsonFinal["CHARACTERS"].update(localDictChar)
 
-        print(self.jsonFinal)
+        pp(self.jsonFinal)
         #print("Nombre compilador: "+self.nombreCompilador)
         # pp(self.lineasPalabras)
 

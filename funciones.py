@@ -66,3 +66,12 @@ class funciones():
         if a == '+' or a == '-':
             return True
         return False
+
+    def sortString(self, str):
+        """
+        Hace sort de un string
+        extraido de: https://www.geeksforgeeks.org/sort-string-characters/
+        *@param: str: el string hacer sort
+        """
+        str = ''.join(sorted(str))
+        return str
