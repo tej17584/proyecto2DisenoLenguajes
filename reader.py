@@ -57,7 +57,7 @@ class Reader:
         for llave, valor in self.jsonFinal.items():
             for x, y in valor.items():
                 for valorCaracter in character:
-                    if(x == valorCaracter and llave == "CHARACTERS"):
+                    if(x == valorCaracter.replace(".", "") and llave == "CHARACTERS"):
                         arrayLocal.append(valorCaracter)
 
         return arrayLocal
@@ -124,12 +124,15 @@ class Reader:
                     localDictChar = {}
                     charName = str(charSplit[0].replace(" ", ""))
                     charValue = charSplit[1]
+                    if(charValue[len(charValue)-1] == "."):
+                        charValue = charValue[0:len(charValue)-1]
                     # extramos los valores unicos la
                     localEvaluador = Conversion()
                     arrayCharValue = localEvaluador.infixToPostfix(charValue)
                     arrayCharValue = arrayCharValue.split(' ')
                     arrayCharacters = self.checkIfMoreCharExist(arrayCharValue)
                     for x in arrayCharacters:
+                        x = x.replace('.', '')
                         charExists, array = self.checkIfCharExists(x)
                         if(charExists and len(x) > 0 and len(array) > 0):
                             array = array.replace('.', '')
@@ -151,7 +154,7 @@ class Reader:
                             operatedCharValue = operatedCharValue.replace(
                                 '"', '')
                             charValue = operatedCharValue
-                            charValue = '"'+charValue+'"'+'.'
+                            charValue = '"'+charValue+'"'
                             # print(charValue)
                             localDictChar[charName] = charValue
                             self.jsonFinal["CHARACTERS"].update(localDictChar)
