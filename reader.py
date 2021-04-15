@@ -30,14 +30,14 @@ class Reader:
         self.isChar = False
         self.isToken = False
         self.isKeyword = False
-        # self.readDocumentAndPoblateStream()
+        self.readDocumentAndPoblateStream()
         self.readDocument()
 
     def readDocumentAndPoblateStream(self):
         """
         Lee el documento ENTERO y lo guarda en una variable, es un stream continuo
         """
-        with open('ATGFilesExamples\ejemploProyecto.atg', 'r') as f:
+        with open('ATGFilesExamples\C.atg', 'r', encoding='utf-8') as f:
             self.streamCompleto = f.read().replace('\n', '')
         f.close()
 
@@ -47,18 +47,27 @@ class Reader:
 
         for llave, valor in self.jsonFinal.items():
             for x, y in valor.items():
+                if(x == character and llave == "CHARACTERS"):
+                    return True, y
+
+        return False, []
+
+    def checkIfMoreCharExist(self, character):
+        arrayLocal = []
+        for llave, valor in self.jsonFinal.items():
+            for x, y in valor.items():
                 for valorCaracter in character:
                     if(x == valorCaracter and llave == "CHARACTERS"):
-                        return True, y, valorCaracter
+                        arrayLocal.append(valorCaracter)
 
-        return False, [], ""
+        return arrayLocal
 
     def readDocument(self):
         """
         Lee el documento de entrada linea por linea y va guardandolo en un diccionario, esa será la estructura.
         Luego, verifica en toda las lineas cual es la linea donde estan los tokens que nos interesan.
         """
-        with open('ATGFilesExamples\ejemploProyecto.atg', "r") as f:
+        with open('ATGFilesExamples\C.atg', "r", encoding='utf-8') as f:
             self.lineasArchivo = f.readlines()
         f.close()
 
@@ -119,13 +128,14 @@ class Reader:
                     localEvaluador = Conversion()
                     arrayCharValue = localEvaluador.infixToPostfix(charValue)
                     arrayCharValue = arrayCharValue.split(' ')
-                    charExists, array, valorCaracter = self.checkIfCharExists(
-                        arrayCharValue)
-                    if(charExists and len(valorCaracter) > 0 and len(array) > 0):
-                        array = array.replace('.', '')
-                        charValue = charValue.replace(valorCaracter, array)
-                        localDictChar[charName] = charValue
-                        self.jsonFinal["CHARACTERS"].update(localDictChar)
+                    arrayCharacters = self.checkIfMoreCharExist(arrayCharValue)
+                    for x in arrayCharacters:
+                        charExists, array = self.checkIfCharExists(x)
+                        if(charExists and len(x) > 0 and len(array) > 0):
+                            array = array.replace('.', '')
+                            charValue = charValue.replace(x, array)
+                            localDictChar[charName] = charValue
+                            self.jsonFinal["CHARACTERS"].update(localDictChar)
 
                     # verificamos si existe
                     if('+' in charValue or '-' in charValue):
@@ -140,8 +150,7 @@ class Reader:
                         if(operatedCharValue != "NO_OPERABLE"):
                             operatedCharValue = operatedCharValue.replace(
                                 '"', '')
-                            charValue = self.funciones.sortString(
-                                operatedCharValue)
+                            charValue = operatedCharValue
                             charValue = '"'+charValue+'"'+'.'
                             # print(charValue)
                             localDictChar[charName] = charValue
@@ -150,7 +159,7 @@ class Reader:
                     localDictChar[charName] = charValue
                     self.jsonFinal["CHARACTERS"].update(localDictChar)
 
-        print(self.jsonFinal)
+        pp(self.jsonFinal)
         #print("Nombre compilador: "+self.nombreCompilador)
         # pp(self.lineasPalabras)
 

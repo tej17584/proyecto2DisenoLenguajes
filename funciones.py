@@ -54,7 +54,7 @@ class funciones():
         REtorna TRUE si el caracter ingresado es un alfanumerico, FALSE de lo contrario
         *@param ch: el caracter a ser probado
         """
-        if ch.isalnum() or ch == "ε" or ch == '"':
+        if ch != "+" and ch != "-":
             return True
         return False
 
@@ -75,3 +75,31 @@ class funciones():
         """
         str = ''.join(sorted(str))
         return str
+
+    def unionTwoStrings(self, string1, string2):
+        """
+        Une dos strings. Elimina duplicados.
+        *@param: string1: el string a unir
+        *@param: string2: el string a sumarle
+        """
+        res = ""
+        temp = string1
+        for i in string2:
+            if i not in temp:
+                string1 += i
+
+        return string1
+
+    def differenceTwoStrings(self, string1, string2):
+        """
+        Une dos strings. Elimina duplicados.
+        *@param: string1: el string a unir
+        *@param: string2: el string a sumarle
+        """
+        res = ""
+        temp = string1
+        for i in string2:
+            if i in temp:
+                string1 = string1.replace(i, '')
+
+        return string1

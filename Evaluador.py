@@ -10,7 +10,7 @@ saldría: DIGIT NUMBER +
 Esto es para cuando queremos sumar dos valores o diferencia de conjuntos.
 V 1.0
 """
-
+from collections import OrderedDict
 #! Zona de imports
 from funciones import *
 
@@ -140,16 +140,23 @@ class Conversion:
         for i in expresion:
             # si no es un entero, entonces es un operando
             if(self.funciones.is_op(i)):
-
-                val1 = set(self.pop2())
-                val2 = set(self.pop2())
+                set1 = {}
+                set2 = {}
+                set1 = set()
+                set2 = set()
+                val1 = self.pop2()
+                val2 = self.pop2()
                 if(('"' in val1) and ('"' in val2)):
+                    set1.update(val1)
+                    set2.update(val2)
                     # print(type(val1))
                     # print(type(val2))
                     # print(val1)
                     # print(val2)
                     # hacemos un switch para saber cual operacion es cual
-                    switcher = {'+': val2 | val1, '-': val2.difference(val1)}
+                    switcher = {
+                        '+': self.funciones.unionTwoStrings(val2, val1),
+                        '-': self.funciones.differenceTwoStrings(val2, val1)}
                     self.push2(switcher.get(i))
                 else:
                     return "NO_OPERABLE"
@@ -163,8 +170,6 @@ class Conversion:
 
         return '"'+(''.join(self.pop2()))+'"'
 
-
-# Probamos la funcionalidad
 #expresion = input('Ingresa una expresión:  ')
 #expresion = expresion.replace(' ', '')
 #obj = Conversion()
