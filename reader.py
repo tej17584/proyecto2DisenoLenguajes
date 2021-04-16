@@ -19,7 +19,7 @@ class Reader:
     """
 
     def __init__(self) -> None:
-        self.rutaFile = "ATGFilesExamples\ejemploProyecto.atg"
+        self.rutaFile = "ATGFilesExamples\C.atg"
         self.streamCompleto = ""
         self.dictArchivoEntrada = ""
         self.lineasArchivo = []
@@ -117,6 +117,10 @@ class Reader:
                 self.isToken = False
                 # creamos la entrada de valor en el dict final
                 self.jsonFinal["KEYWORDS"] = {}
+            elif(line == "PRODUCTIONS" or line == "PRAGMAS"):
+                self.isChar = False
+                self.isKeyword = False
+                self.isToken = False
 
             #!----------------------------------------- CHARACTERES SECTIONS---------------------------------------------------
             if((self.isChar == True) and (self.isKeyword == False) and (self.isToken == False)):
