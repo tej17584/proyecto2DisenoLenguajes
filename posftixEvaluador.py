@@ -2,7 +2,7 @@
 Nombre: Alejandro Tejada
 Curso: Diseño lenguajes de programacion
 Fecha: Abril 2021
-Programa: Evaluador.py
+Programa: posftixEvaluador.py
 Propósito: Este programa toma dos expresiones cualesquiera, no numeros necesariamente y las
 convierte en operaciones postfix. Por ejemplo:
 entrada: DIGIT + NUMBER

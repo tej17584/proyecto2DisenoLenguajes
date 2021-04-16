@@ -10,7 +10,7 @@ V 1.0
 # ! Zona de imports
 from funciones import funciones
 from pprint import pprint as pp
-from Evaluador import *
+from posftixEvaluador import *
 
 
 class Reader:
@@ -27,7 +27,7 @@ class Reader:
         self.jsonFinal = {}  # diccionario final
         self.nombreCompilador = ""
         self.funciones = funciones()
-        self.evaluador = Conversion()
+        self.posftixEvaluador = Conversion()
         self.isChar = False
         self.isToken = False
         self.isKeyword = False
