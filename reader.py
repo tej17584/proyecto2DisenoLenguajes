@@ -19,6 +19,7 @@ class Reader:
     """
 
     def __init__(self) -> None:
+        self.rutaFile = "ATGFilesExamples\ejemploProyecto.atg"
         self.streamCompleto = ""
         self.dictArchivoEntrada = ""
         self.lineasArchivo = []
@@ -37,11 +38,11 @@ class Reader:
         """
         Lee el documento ENTERO y lo guarda en una variable, es un stream continuo
         """
-        with open('ATGFilesExamples\C.atg', 'r', encoding='utf-8') as f:
+        with open(self.rutaFile, 'r', encoding='utf-8') as f:
             self.streamCompleto = f.read().replace('\n', '')
         f.close()
 
-        #print("Stream completo ", self.streamCompleto)
+        # print("Stream completo ", self.streamCompleto)
 
     def checkIfCharExists(self, character):
 
@@ -67,7 +68,7 @@ class Reader:
         Lee el documento de entrada linea por linea y va guardandolo en un diccionario, esa será la estructura.
         Luego, verifica en toda las lineas cual es la linea donde estan los tokens que nos interesan.
         """
-        with open('ATGFilesExamples\C.atg', "r", encoding='utf-8') as f:
+        with open(self.rutaFile, "r", encoding='utf-8') as f:
             self.lineasArchivo = f.readlines()
         f.close()
 
@@ -117,53 +118,97 @@ class Reader:
                 # creamos la entrada de valor en el dict final
                 self.jsonFinal["KEYWORDS"] = {}
 
-            if(self.isChar):
+            #!----------------------------------------- CHARACTERES SECTIONS---------------------------------------------------
+            if((self.isChar == True) and (self.isKeyword == False) and (self.isToken == False)):
                 # hacemos split con el '=', esto es un ARRAY
                 charSplit = line.split("=")
                 if(type(charSplit) != None and len(charSplit) > 1 and charSplit[0] != "CHARACTERS"):
                     localDictChar = {}
                     charName = str(charSplit[0].replace(" ", ""))
                     charValue = charSplit[1]
+                    # removemos el punto del character
                     if(charValue[len(charValue)-1] == "."):
                         charValue = charValue[0:len(charValue)-1]
                     # extramos los valores unicos la
                     localEvaluador = Conversion()
-                    arrayCharValue = localEvaluador.infixToPostfix(charValue)
+                    arrayCharValue = localEvaluador.infixToPostfix(
+                        charValue)  # convertimos a posftix
                     arrayCharValue = arrayCharValue.split(' ')
+                    # verificamos si existe más de un valor por sustituir
                     arrayCharacters = self.checkIfMoreCharExist(arrayCharValue)
                     for x in arrayCharacters:
                         x = x.replace('.', '')
+                        # esta función retorna el valor del char a sustiuir y su contenido
                         charExists, array = self.checkIfCharExists(x)
-                        if(charExists and len(x) > 0 and len(array) > 0):
+                        if(charExists and len(x) > 0 and len(array) > 0):  # si existe
                             array = array.replace('.', '')
-                            charValue = charValue.replace(x, array)
+                            charValue = charValue.replace(
+                                x, array)  # reemplazamos el valor
+                            # actualizamos el diccionario
                             localDictChar[charName] = charValue
                             self.jsonFinal["CHARACTERS"].update(localDictChar)
 
-                    # verificamos si existe
+                    # verificamos si hay un símbolo de operar
                     if('+' in charValue or '-' in charValue):
                         localEvaluador2 = Conversion()
-                        charValue2 = charValue.replace('.', "")
+                        charValue2 = charValue.replace(
+                            '.', "")  # reemplazamos los puntos
                         postfixCharValue = localEvaluador2.infixToPostfix(
-                            charValue2)
-
+                            charValue2)  # hacemos la expresion postfix
+                        # hacemos split
                         postfixCharValue = postfixCharValue.split(' ')
+                        # operamos el postfix, para que nos lo retorne bien
                         operatedCharValue = localEvaluador2.operatePostFix(
                             postfixCharValue)
+                        # si resulta que no es operable no actualizamos
                         if(operatedCharValue != "NO_OPERABLE"):
                             operatedCharValue = operatedCharValue.replace(
-                                '"', '')
-                            charValue = operatedCharValue
-                            charValue = '"'+charValue+'"'
+                                '"', '')  # reemplazamos los '"' con vacíos
+                            charValue = operatedCharValue  # igaualamos
+                            charValue = '"'+charValue+'"'  # agregamos
                             # print(charValue)
+                            # actualizamos diccionarios
                             localDictChar[charName] = charValue
                             self.jsonFinal["CHARACTERS"].update(localDictChar)
 
                     localDictChar[charName] = charValue
                     self.jsonFinal["CHARACTERS"].update(localDictChar)
+        #!----------------------------------------- FINALIZA CHARACTERES SECTIONS---------------------------------------------------
+        # ? -----------------------------------------KEYWORDS SECTION ----------------------------------------------------------------
+            # leemos las keywords
+            elif((self.isChar == False) and (self.isKeyword == True) and (self.isToken == False)):
+                # hacemos split con el '=', esto es un ARRAY
+                keywordSplit = line.split("=")
+                if(type(keywordSplit) != None and len(keywordSplit) > 1 and keywordSplit[0] != "KEYWORDS"):
+                    localDictKeyWord = {}
+                    keyName = str(keywordSplit[0].replace(" ", ""))
+                    keyValue = keywordSplit[1]
+                    # removemos el punto del character
+                    if(keyValue[len(keyValue)-1] == "."):
+                        keyValue = keyValue[0:len(keyValue)-1]
+                    localDictKeyWord[keyName] = keyValue
+                    self.jsonFinal["KEYWORDS"].update(localDictKeyWord)
+
+        # ? -----------------------------------------FINALIZA KEYWORDS SECTION ----------------------------------------------------------------
+        # ? -----------------------------------------TOKENS SECTION ----------------------------------------------------------------
+            # leemos las tokens
+            elif((self.isChar == False) and (self.isKeyword == False) and (self.isToken == True)):
+                # hacemos split con el '=', esto es un ARRAY
+                tokenSplit = line.split("=")
+                if(type(tokenSplit) != None and len(tokenSplit) > 1 and tokenSplit[0] != "TOKENS"):
+                    localTokenDict = {}
+                    tokenName = str(tokenSplit[0].replace(" ", ""))
+                    tokenValue = tokenSplit[1]
+                    # removemos el punto del character
+                    if(tokenValue[len(tokenValue)-1] == "."):
+                        tokenValue = tokenValue[0:len(tokenValue)-1]
+                    localTokenDict[tokenName] = tokenValue
+                    self.jsonFinal["TOKENS"].update(localTokenDict)
+
+        # ? -----------------------------------------FINALIZA TOKENS SECTION ----------------------------------------------------------------
 
         pp(self.jsonFinal)
-        #print("Nombre compilador: "+self.nombreCompilador)
+        # print("Nombre compilador: "+self.nombreCompilador)
         # pp(self.lineasPalabras)
 
 
