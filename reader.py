@@ -19,10 +19,11 @@ class Reader:
     """
 
     def __init__(self) -> None:
-        self.rutaFile = "ATGFilesExamples\C.atg"
+        self.rutaFile = "ATGFilesExamples\AdaCS.atg"
         self.streamCompleto = ""
         self.dictArchivoEntrada = ""
         self.lineasArchivo = []
+        self.lineasArchivoWithNumber = {}
         self.lineasPalabras = {}
         self.jsonFinal = {}  # diccionario final
         self.nombreCompilador = ""
@@ -36,12 +37,17 @@ class Reader:
 
     def readDocumentAndPoblateStream(self):
         """
-        Lee el documento ENTERO y lo guarda en una variable, es un stream continuo
+        Lee el documento ENTERO y lo guarda en una variable, 
+        es un stream continuo y contiene como llave la linea
         """
-        with open(self.rutaFile, 'r', encoding='utf-8') as f:
-            self.streamCompleto = f.read().replace('\n', '')
+        with open(self.rutaFile, "r", encoding='utf-8') as f:
+            self.lineasArchivo = f.readlines()
         f.close()
 
+        contador = 0
+        for x in self.lineasArchivo:
+            self.lineasArchivoWithNumber[(contador)] = x
+            contador = contador+1
         # print("Stream completo ", self.streamCompleto)
 
     def checkIfCharExists(self, character):
@@ -63,20 +69,41 @@ class Reader:
 
         return arrayLocal
 
+    def TokenMultiLinea(self, tokenEnorme, lineadelToken):
+        newTokenValue = ""
+        # obtenemos la linea del token general
+        lineaTokenHeader = self.lineasPalabras["TOKENS"]
+        line = self.lineasArchivoWithNumber[lineadelToken]
+        line = line.rstrip("\n")  # eliminamos la linea
+        line = line.replace(" ", "")  # quitamos el espacio en blanco
+        lineaArray = line.split("=")
+        newTokenValue = newTokenValue+lineaArray[1]
+        varExit = True
+        contadorInterno = lineadelToken+1
+        while varExit:
+            line = self.lineasArchivoWithNumber[contadorInterno]
+            line = line.rstrip("\n")  # eliminamos la linea
+            line = line.replace(" ", "")  # quitamos el espacio en blanco
+            if(line[len(line)-1] == "."):
+                newTokenValue = newTokenValue+line.replace(".", "")
+                varExit = False
+            else:
+                newTokenValue = newTokenValue+line
+
+            contadorInterno += 1
+        return newTokenValue
+
     def readDocument(self):
         """
         Lee el documento de entrada linea por linea y va guardandolo en un diccionario, esa será la estructura.
         Luego, verifica en toda las lineas cual es la linea donde estan los tokens que nos interesan.
         """
-        with open(self.rutaFile, "r", encoding='utf-8') as f:
-            self.lineasArchivo = f.readlines()
-        f.close()
-
         # Leemos las lineas donde estan las palabras especiales y guardamos el número  de linea.
         # Esto nos puede servir luego.
         count = 0
         for line in self.lineasArchivo:
             line = line.rstrip("\n")  # eliminamos la linea
+            line = line.replace(" ", "")  # quitamos el espacio en blanco
             if "COMPILER" in line:
                 self.nombreCompilador = self.funciones.removerPalabraSingle(
                     line, "COMPILER")
@@ -94,6 +121,7 @@ class Reader:
                 self.lineasPalabras[line] = count
             count += 1
 
+        count2 = 0
         for line in self.lineasArchivo:
             line = line.rstrip("\n")  # eliminamos la linea
             line = line.replace(" ", "")  # quitamos el espacio en blanco
@@ -177,8 +205,8 @@ class Reader:
 
                     localDictChar[charName] = charValue
                     self.jsonFinal["CHARACTERS"].update(localDictChar)
-        #!----------------------------------------- FINALIZA CHARACTERES SECTIONS---------------------------------------------------
-        # ? -----------------------------------------KEYWORDS SECTION ----------------------------------------------------------------
+         #!----------------------------------------- FINALIZA CHARACTERES SECTIONS---------------------------------------------------
+         # ? -----------------------------------------KEYWORDS SECTION ----------------------------------------------------------------
             # leemos las keywords
             elif((self.isChar == False) and (self.isKeyword == True) and (self.isToken == False)):
                 # hacemos split con el '=', esto es un ARRAY
@@ -193,8 +221,8 @@ class Reader:
                     localDictKeyWord[keyName] = keyValue
                     self.jsonFinal["KEYWORDS"].update(localDictKeyWord)
 
-        # ? -----------------------------------------FINALIZA KEYWORDS SECTION ----------------------------------------------------------------
-        # ? -----------------------------------------TOKENS SECTION ----------------------------------------------------------------
+         # ? -----------------------------------------FINALIZA KEYWORDS SECTION ----------------------------------------------------------------
+         # ? -----------------------------------------TOKENS SECTION ----------------------------------------------------------------
             # leemos las tokens
             elif((self.isChar == False) and (self.isKeyword == False) and (self.isToken == True)):
                 # hacemos split con el '=', esto es un ARRAY
@@ -204,12 +232,17 @@ class Reader:
                     tokenName = str(tokenSplit[0].replace(" ", ""))
                     tokenValue = tokenSplit[1]
                     # removemos el punto del character
+                    # además de remover verificamos que no sea de doble línea
                     if(tokenValue[len(tokenValue)-1] == "."):
                         tokenValue = tokenValue[0:len(tokenValue)-1]
-                    localTokenDict[tokenName] = tokenValue
-                    self.jsonFinal["TOKENS"].update(localTokenDict)
-
-        # ? -----------------------------------------FINALIZA TOKENS SECTION ----------------------------------------------------------------
+                        localTokenDict[tokenName] = tokenValue
+                        self.jsonFinal["TOKENS"].update(localTokenDict)
+                    else:  # si por el contrario no termina en punto iteramos
+                        tokenValue = self.TokenMultiLinea(tokenValue, count2)
+                        localTokenDict[tokenName] = tokenValue
+                        self.jsonFinal["TOKENS"].update(localTokenDict)
+            count2 += 1
+         # ? -----------------------------------------FINALIZA TOKENS SECTION ----------------------------------------------------------------
 
         pp(self.jsonFinal)
         # print("Nombre compilador: "+self.nombreCompilador)
