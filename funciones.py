@@ -18,6 +18,13 @@ class funciones():
                               "3": "D", "4": "E", "5": "F",
                               "6": "G", "7": "H",
                               "8": "I", "9": "J"}
+        self.ANYSET = set([chr(char) for char in range(0, 65535)])
+
+    def get_ANYSET(self):
+        """
+        Retorna el set de ANYSET
+        """
+        return self.ANYSET
 
     def printPrettyDictionary(self, d, indent=0):
         """

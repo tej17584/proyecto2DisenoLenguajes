@@ -19,7 +19,7 @@ class Reader:
     """
 
     def __init__(self) -> None:
-        self.rutaFile = "ATGFilesExamples\AdaCS.atg"
+        self.rutaFile = "ATGFilesExamples\C.atg"
         self.streamCompleto = ""
         self.dictArchivoEntrada = ""
         self.lineasArchivo = []
@@ -37,7 +37,7 @@ class Reader:
 
     def readDocumentAndPoblateStream(self):
         """
-        Lee el documento ENTERO y lo guarda en una variable, 
+        Lee el documento ENTERO y lo guarda en una variable,
         es un stream continuo y contiene como llave la linea
         """
         with open(self.rutaFile, "r", encoding='utf-8') as f:
@@ -93,6 +93,58 @@ class Reader:
             contadorInterno += 1
         return newTokenValue
 
+    def replaceCharValues(self, charValue):
+        acumulable = ""
+        arrayNumeros = []
+        if('..' in charValue):
+            arrayCharsRango = charValue.split(' ')
+            # encontramos los rangos
+            for x in arrayCharsRango:
+                if('CHR(' in x):
+                    posicionInicialCHR = x.index('(')
+                    posicionFInalCHR = x.index(')')
+                    numeroChar = int(
+                        x[int(posicionInicialCHR+1): int(posicionFInalCHR)])
+                    arrayNumeros.append(numeroChar)
+                    # reemplazamos los CHR de una vez
+                    valorChar = chr(
+                        int(x[int(posicionInicialCHR+1): int(posicionFInalCHR)]))
+                    stringReplace = 'CHR(' +\
+                        x[int(posicionInicialCHR+1):int(posicionFInalCHR)] +\
+                        ')'
+                    # print("")
+                    charValue = charValue.replace(
+                        stringReplace,  valorChar)
+
+            for x in arrayCharsRango:
+                if(x == ".."):
+                    maximoValor = max(arrayNumeros)
+                    minimoValor = min(arrayNumeros)
+                    acumulador = ""
+                    # Ya teniendo los rangos, iteramos
+                    for valor in range(minimoValor+1, maximoValor):
+                        acumulador += (chr(valor))
+                    stringReplace = '..'
+                    # print("")
+                    charValue = charValue.replace(
+                        stringReplace, acumulador)
+        else:
+            arrayChars = charValue.split(' ')
+            for x in arrayChars:
+                if('CHR(' in x):
+                    posicionInicialCHR = x.index('(')
+                    posicionFInalCHR = x.index(')')
+                    valorChar = chr(
+                        int(x[int(posicionInicialCHR+1): int(posicionFInalCHR)]))
+                    stringReplace = 'CHR(' +\
+                        x[int(posicionInicialCHR+1):int(posicionFInalCHR)] +\
+                        ')'
+                    # print("")
+                    charValue = charValue.replace(
+                        stringReplace, '"' + valorChar + '"')
+
+        return charValue
+
     def readDocument(self):
         """
         Lee el documento de entrada linea por linea y va guardandolo en un diccionario, esa será la estructura.
@@ -124,7 +176,7 @@ class Reader:
         count2 = 0
         for line in self.lineasArchivo:
             line = line.rstrip("\n")  # eliminamos la linea
-            line = line.replace(" ", "")  # quitamos el espacio en blanco
+            # line = line.replace(" ", "")  # quitamos el espacio en blanco
             # Dependiendo del tipo de valor, seteamos el valor de la booleana,
             # de esa forma iteramos
             if(line == "CHARACTERS" or line == "CHARACTER"):
@@ -158,13 +210,16 @@ class Reader:
                     localDictChar = {}
                     charName = str(charSplit[0].replace(" ", ""))
                     charValue = charSplit[1]
+                    charValue1 = charValue.replace(" ", "")
                     # removemos el punto del character
+                    if(charValue1[len(charValue1)-1] == "."):
+                        charValue1 = charValue1[0:len(charValue1)-1]
                     if(charValue[len(charValue)-1] == "."):
                         charValue = charValue[0:len(charValue)-1]
                     # extramos los valores unicos la
                     localEvaluador = Conversion()
                     arrayCharValue = localEvaluador.infixToPostfix(
-                        charValue)  # convertimos a posftix
+                        charValue1)  # convertimos a posftix
                     arrayCharValue = arrayCharValue.split(' ')
                     # verificamos si existe más de un valor por sustituir
                     arrayCharacters = self.checkIfMoreCharExist(arrayCharValue)
@@ -174,19 +229,64 @@ class Reader:
                         charExists, array = self.checkIfCharExists(x)
                         if(charExists and len(x) > 0 and len(array) > 0):  # si existe
                             array = array.replace('.', '')
-                            charValue = charValue.replace(
+                            charValue1 = charValue1.replace(
                                 x, array)  # reemplazamos el valor
-                            # actualizamos el diccionario
-                            localDictChar[charName] = charValue
-                            self.jsonFinal["CHARACTERS"].update(localDictChar)
 
-                    # verificamos si hay un símbolo de operar
-                    if('+' in charValue or '-' in charValue):
+                    # ? Ahora verificamos si tiene algún CHAR
+                    if('CHR(' in charValue):
+                        if('-' in charValue or '+' in charValue):
+                            signoMas = False
+                            signoMenos = False
+                            splitporOperando = []
+                            charASumador = []
+                            if('+' in charValue):
+                                signoMas = True
+                                signoMenos = False
+                            elif('-' in charValue):
+                                signoMenos = True
+                                signoMas = False
+                            if(signoMas == True and signoMenos == False):
+                                splitporOperando = charValue.split('+')
+                            elif(signoMas == False and signoMenos == True):
+                                splitporOperando = charValue.split('-')
+                            charAOperar = ""
+                            for x in splitporOperando:
+                                if('CHR(' in x):
+                                    charAOperar = x
+                            for y in splitporOperando:
+                                if('CHR(' not in y):
+                                    charASumador = y
+                            sustitucionTokens = self.replaceCharValues(
+                                charAOperar)
+                            localEvaluador2 = Conversion()
+                            # reemplzamos valores
+                            postfixCharValue = localEvaluador2.infixToPostfix(
+                                charValue.replace(" ", ""))  # hacemos la expresion postfix
+                            # hacemos split
+                            postfixCharValue = postfixCharValue.split(' ')
+                            contador = 0
+                            for w in postfixCharValue:
+                                if(w == charAOperar.replace(" ", "")):
+                                    postfixCharValue[contador] = sustitucionTokens
+                                contador += 1
+                             # operamos el postfix, para que nos lo retorne bien
+                            operatedCharValue = localEvaluador2.operatePostFix(
+                                postfixCharValue)
+                            # si resulta que no es operable no actualizamos
+                            if(operatedCharValue != "NO_OPERABLE"):
+                                # operatedCharValue = operatedCharValue.replace(
+                                #    '"', '')  # reemplazamos los '"' con vacíos
+                                charValue1 = operatedCharValue  # igaualamos
+                                charValue1 = charValue1  # agregamos
+                        else:
+                            sustitucionTokens = self.replaceCharValues(
+                                charValue)
+                            charValue1 = sustitucionTokens
+                        # verificamos si hay un símbolo de operar
+                    if('+' in charValue1 or '-' in charValue1):
                         localEvaluador2 = Conversion()
-                        charValue2 = charValue.replace(
-                            '.', "")  # reemplazamos los puntos
                         postfixCharValue = localEvaluador2.infixToPostfix(
-                            charValue2)  # hacemos la expresion postfix
+                            charValue1)  # hacemos la expresion postfix
                         # hacemos split
                         postfixCharValue = postfixCharValue.split(' ')
                         # operamos el postfix, para que nos lo retorne bien
@@ -194,16 +294,12 @@ class Reader:
                             postfixCharValue)
                         # si resulta que no es operable no actualizamos
                         if(operatedCharValue != "NO_OPERABLE"):
-                            operatedCharValue = operatedCharValue.replace(
-                                '"', '')  # reemplazamos los '"' con vacíos
-                            charValue = operatedCharValue  # igaualamos
-                            charValue = '"'+charValue+'"'  # agregamos
-                            # print(charValue)
-                            # actualizamos diccionarios
-                            localDictChar[charName] = charValue
-                            self.jsonFinal["CHARACTERS"].update(localDictChar)
+                            # operatedCharValue = operatedCharValue.replace(
+                            #    '"', '')  # reemplazamos los '"' con vacíos
+                            charValue1 = operatedCharValue  # igaualamos
+                            charValue1 = charValue1  # agregamos
 
-                    localDictChar[charName] = charValue
+                    localDictChar[charName] = charValue1
                     self.jsonFinal["CHARACTERS"].update(localDictChar)
          #!----------------------------------------- FINALIZA CHARACTERES SECTIONS---------------------------------------------------
          # ? -----------------------------------------KEYWORDS SECTION ----------------------------------------------------------------
@@ -244,7 +340,13 @@ class Reader:
             count2 += 1
          # ? -----------------------------------------FINALIZA TOKENS SECTION ----------------------------------------------------------------
 
-        pp(self.jsonFinal)
+        print(self.jsonFinal["CHARACTERS"])
+        """ for x, y in self.jsonFinal.items():
+            for valor, pedazito in y.items():
+                print(valor)
+                print(f'Tipo de la llave {type(valor)}')
+                print(pedazito)
+                print(f'Tipo del valor {type(pedazito)}') """
         # print("Nombre compilador: "+self.nombreCompilador)
         # pp(self.lineasPalabras)
 

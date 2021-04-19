@@ -139,10 +139,10 @@ class Conversion:
         local = ""
         for i in expresion:
             # si no es un entero, entonces es un operando
-            if(self.funciones.is_op(i)):
+            if(self.funciones.is_op(i) and len(i) < 2):
                 val1 = set(self.pop2())
                 val2 = set(self.pop2())
-                if(('"' in val1) and ('"' in val2)):
+                if((('"' in val1) or ("'" in val1)) and (('"' in val2) or ("'" in val2))):
                     # print(type(val1))
                     # print(type(val2))
                     # print(val1)
@@ -164,7 +164,9 @@ class Conversion:
                 self.push2(local)
                 local = ""
 
-        return '"'+(''.join(self.pop2()))+'"'
+        varRetornar = self.pop2()
+        # varRetornar.remove('"')
+        return varRetornar
 
 #expresion = input('Ingresa una expresión:  ')
 #expresion = expresion.replace(' ', '')
