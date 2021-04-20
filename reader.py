@@ -176,28 +176,28 @@ class Reader:
         count2 = 0
         for line in self.lineasArchivo:
             line = line.rstrip("\n")  # eliminamos la linea
-            # line = line.replace(" ", "")  # quitamos el espacio en blanco
+            line2 = line.replace(" ", "")  # quitamos el espacio en blanco
             # Dependiendo del tipo de valor, seteamos el valor de la booleana,
             # de esa forma iteramos
-            if(line == "CHARACTERS" or line == "CHARACTER"):
+            if(line2 == "CHARACTERS" or line2 == "CHARACTER"):
                 self.isChar = True
                 self.isKeyword = False
                 self.isToken = False
                 # creamos la entrada de valor en el dict final
                 self.jsonFinal["CHARACTERS"] = {}
-            elif(line == "TOKENS" or line == "TOKEN"):
+            elif(line2 == "TOKENS" or line2 == "TOKEN"):
                 self.isChar = False
                 self.isKeyword = False
                 self.isToken = True
                 # creamos la entrada de valor en el dict final
                 self.jsonFinal["TOKENS"] = {}
-            elif(line == "KEYWORDS" or line == "KEYWORD"):
+            elif(line2 == "KEYWORDS" or line2 == "KEYWORD"):
                 self.isChar = False
                 self.isKeyword = True
                 self.isToken = False
                 # creamos la entrada de valor en el dict final
                 self.jsonFinal["KEYWORDS"] = {}
-            elif(line == "PRODUCTIONS" or line == "PRAGMAS"):
+            elif(line2 == "PRODUCTIONS" or line2 == "PRAGMAS"):
                 self.isChar = False
                 self.isKeyword = False
                 self.isToken = False
@@ -252,10 +252,10 @@ class Reader:
                             charAOperar = ""
                             for x in splitporOperando:
                                 if('CHR(' in x):
-                                    charAOperar = x
+                                    charAOperar = x  # este el que nos interesa sustutuir
                             for y in splitporOperando:
                                 if('CHR(' not in y):
-                                    charASumador = y
+                                    charASumador = y  # este char es el que SUMA
                             sustitucionTokens = self.replaceCharValues(
                                 charAOperar)
                             localEvaluador2 = Conversion()
@@ -268,6 +268,9 @@ class Reader:
                             for w in postfixCharValue:
                                 if(w == charAOperar.replace(" ", "")):
                                     postfixCharValue[contador] = sustitucionTokens
+                                elif(w == charASumador.replace(" ", "")):
+                                    postfixCharValue[contador] = self.funciones.getBetweenComillaSandComillaDoble(
+                                        w)
                                 contador += 1
                              # operamos el postfix, para que nos lo retorne bien
                             operatedCharValue = localEvaluador2.operatePostFix(
@@ -280,11 +283,12 @@ class Reader:
                                 charValue1 = charValue1  # agregamos
                         else:
                             sustitucionTokens = self.replaceCharValues(
-                                charValue)
+                                charValue.replace(" ", ""))
                             charValue1 = sustitucionTokens
                         # verificamos si hay un símbolo de operar
                     if('+' in charValue1 or '-' in charValue1):
                         localEvaluador2 = Conversion()
+                        charValue1 = charValue1.replace(" ", "")
                         postfixCharValue = localEvaluador2.infixToPostfix(
                             charValue1)  # hacemos la expresion postfix
                         # hacemos split
@@ -301,9 +305,10 @@ class Reader:
 
                     localDictChar[charName] = charValue1
                     self.jsonFinal["CHARACTERS"].update(localDictChar)
-         #!----------------------------------------- FINALIZA CHARACTERES SECTIONS---------------------------------------------------
-         # ? -----------------------------------------KEYWORDS SECTION ----------------------------------------------------------------
-            # leemos las keywords
+
+                    #!----------------------------------------- FINALIZA CHARACTERES SECTIONS---------------------------------------------------
+                    # ? -----------------------------------------KEYWORDS SECTION ----------------------------------------------------------------
+                # leemos las keywords
             elif((self.isChar == False) and (self.isKeyword == True) and (self.isToken == False)):
                 # hacemos split con el '=', esto es un ARRAY
                 keywordSplit = line.split("=")
@@ -317,9 +322,9 @@ class Reader:
                     localDictKeyWord[keyName] = keyValue
                     self.jsonFinal["KEYWORDS"].update(localDictKeyWord)
 
-         # ? -----------------------------------------FINALIZA KEYWORDS SECTION ----------------------------------------------------------------
-         # ? -----------------------------------------TOKENS SECTION ----------------------------------------------------------------
-            # leemos las tokens
+                    # ? -----------------------------------------FINALIZA KEYWORDS SECTION ----------------------------------------------------------------
+                    # ? -----------------------------------------TOKENS SECTION ----------------------------------------------------------------
+                # leemos las tokens
             elif((self.isChar == False) and (self.isKeyword == False) and (self.isToken == True)):
                 # hacemos split con el '=', esto es un ARRAY
                 tokenSplit = line.split("=")
@@ -338,9 +343,16 @@ class Reader:
                         localTokenDict[tokenName] = tokenValue
                         self.jsonFinal["TOKENS"].update(localTokenDict)
             count2 += 1
-         # ? -----------------------------------------FINALIZA TOKENS SECTION ----------------------------------------------------------------
 
-        print(self.jsonFinal["CHARACTERS"])
+            # ? -----------------------------------------FINALIZA TOKENS SECTION ----------------------------------------------------------------
+
+         # Si incluso luego de todo esto no es aún set lo volvemos set
+        for llave, valor in self.jsonFinal["CHARACTERS"].items():
+            if(isinstance(valor, str)):
+                valor = self.funciones.getBetweenComillaSandComillaDoble(
+                    valor)
+                self.jsonFinal["CHARACTERS"][llave] = set(valor)
+        print(self.jsonFinal)
         """ for x, y in self.jsonFinal.items():
             for valor, pedazito in y.items():
                 print(valor)

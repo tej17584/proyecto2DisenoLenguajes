@@ -18,7 +18,7 @@ class funciones():
                               "3": "D", "4": "E", "5": "F",
                               "6": "G", "7": "H",
                               "8": "I", "9": "J"}
-        self.ANYSET = set([chr(char) for char in range(0, 65535)])
+        self.ANYSET = set([chr(char) for char in range(0, 255)])
 
     def get_ANYSET(self):
         """
@@ -47,7 +47,7 @@ class funciones():
 
     def removerPalabraSingle(self, string, palabra):
         """
-        Remueve la palabra del string y los espacios extra que contenga el string. 
+        Remueve la palabra del string y los espacios extra que contenga el string.
         Útil si la linea solamente tiene dos valores. Como:
         COMPILER AdaCS
         Nos retorna: AdaCS
@@ -110,3 +110,49 @@ class funciones():
                 string1 = string1.replace(i, '')
 
         return string1
+
+    def getBetweenComillaSandComillaDoble(self, value):
+        """
+        VErifica si en un posible valor a sumar lo que hay es comilla doble o comilla simple. Si es simple,
+        retornamos solo eso, si es doble quitamos lo doble
+        El criterio es que si hay dos, es porque esta entre ellos el operando
+        *@param: value: el string a valuar
+        """
+        contadorComilla = 0
+        contadorComillaSimple = 0
+        for x in value:
+            if x == '"':
+                contadorComilla += 1
+            elif x == "'":
+                contadorComillaSimple += 1
+
+        if(contadorComilla >= 2 and contadorComillaSimple < 2):
+            return value.replace('"', '')
+        elif(contadorComilla < 2 and contadorComillaSimple >= 2):
+            value = value.replace("'", '')
+            return value
+
+        return value
+
+    def getBetweenComillaSandComillaDobleV2(self, value):
+        """
+        VErifica si en un posible valor a sumar lo que hay es comilla doble o comilla simple. Si es simple,
+        retornamos solo eso, si es doble retornamos lo original.
+        El criterio es que si hay dos, es porque esta entre ellos el operando
+        *@param: value: el string a valuar
+        """
+        contadorComilla = 0
+        contadorComillaSimple = 0
+        for x in value:
+            if x == '"':
+                contadorComilla += 1
+            elif x == "'":
+                contadorComillaSimple += 1
+
+        if(contadorComilla >= 2 and contadorComillaSimple < 2):
+            return value
+        elif(contadorComilla < 2 and contadorComillaSimple >= 2):
+            value = value.replace("'", '')
+            return value
+
+        return value

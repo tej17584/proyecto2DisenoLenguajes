@@ -140,13 +140,33 @@ class Conversion:
         for i in expresion:
             # si no es un entero, entonces es un operando
             if(self.funciones.is_op(i) and len(i) < 2):
-                val1 = set(self.pop2())
-                val2 = set(self.pop2())
-                if((('"' in val1) or ("'" in val1)) and (('"' in val2) or ("'" in val2))):
-                    # print(type(val1))
-                    # print(type(val2))
-                    # print(val1)
-                    # print(val2)
+                preval1 = self.pop2()
+                preval2 = self.pop2()
+                val1 = set(preval1)
+                val2 = set(preval2)
+                if(preval1 == "ANY" or preval1 == 'ANY'):
+                    val1 = self.funciones.get_ANYSET()
+                    val2 = self.funciones.getBetweenComillaSandComillaDoble(
+                        preval2)
+                    val2 = set(val2)
+                    switcher = {
+                        '+': val2.union(val1), '-': val2.difference(val1)}
+                    self.push2(switcher.get(i))
+                elif(preval2 == "ANY" or preval2 == 'ANY'):
+                    val2 = self.funciones.get_ANYSET()
+                    val1 = self.funciones.getBetweenComillaSandComillaDoble(
+                        preval1)
+                    val1 = set(val1)
+                    switcher = {
+                        '+': val2.union(val1), '-': val2.difference(val1)}
+                    self.push2(switcher.get(i))
+                else:
+                    val1 = self.funciones.getBetweenComillaSandComillaDoble(
+                        preval1)
+                    val2 = self.funciones.getBetweenComillaSandComillaDoble(
+                        preval2)
+                    val1 = set(preval1)
+                    val2 = set(preval2)
                     # hacemos un switch para saber cual operacion es cual
                     """ switcher = {
                         '+': self.funciones.unionTwoStrings(val2, val1),
@@ -154,8 +174,6 @@ class Conversion:
                     switcher = {
                         '+': val2.union(val1), '-': val2.difference(val1)}
                     self.push2(switcher.get(i))
-                else:
-                    return "NO_OPERABLE"
             else:
                 for x in i:
                     if(self.funciones.isOperand(x)):
