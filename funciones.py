@@ -74,6 +74,110 @@ class funciones():
             return True
         return False
 
+    def alterateRE(self, RE):
+        """
+        Altera una expresión regular agregándole puntos a la concatenacion para ser mas legible para el postfix
+        *@param RE: la expresión regular original
+        """
+        nuevaRE = ""
+        contador = 0
+        for x in range(0, len(RE)):
+            #print("EN EL CICLO S  ", RE[x])
+            #print("EN el ITER ES : ", RE[x+1:x+2])
+            nuevaRE += RE[x]
+            if(RE[x] == ")" or RE[x] == "*"):
+                contador += 1
+            if(RE[x+1:x+2] != " " and contador == 1):
+                if(RE[x+1:x+2] == "("):
+                    nuevaRE += "."
+                    contador = 0
+                else:
+                    contador = 0
+        return nuevaRE
+
+    def alterateAskChain(self, exp):
+        """
+        ESta funcion altera una cadena o expresion regular, y si encuentra un simbolo de + entonces lo sustitye por el equivalente
+        *@param: exp: la expresion a ser valuada y que se le quite el simbolo de más
+        """
+        value = "?" in exp
+        if(value == False):
+            return exp
+        else:
+            index = exp.find('?')
+            if exp[index-1] == ")":
+                dentro = ""
+                for i in reversed(exp[0:index-1]):
+                    dentro += i
+                    if i == "[":
+                        dentro = dentro[::-1]
+                        cantidad1 = len(dentro)
+                        cantidad2 = len(exp[0:index-1])
+                        ignore = cantidad2 - cantidad1
+                        dentro = dentro[1:len(dentro)]
+                        # print(dentro)
+                        # print(exp[0:2])
+                        return self.alterateAskChain(exp[0:ignore] + "(" + "(" + dentro + ")" + "|ε)" + exp[index+1:len(exp)])
+            else:
+                return self.alterateAskChain(exp[0:index-1] + "(" + "(" + exp[index-1] + ")" + "|ε)" + exp[index+1:len(exp)])
+
+    def substituLlavesCorchetes(self, expresion):
+        """
+        Sustiuye las aberturas de corchetes y de llaves y sus cerraduras por los equivalentes.
+        *@param expresion: la expresion a cambiar
+        """
+        newExpresion = ""
+        for x in expresion:
+            if(x == "]"):
+                newExpresion = newExpresion+')?'
+            elif(x == "}"):
+                newExpresion = newExpresion+')*'
+            else:
+                newExpresion += x
+
+        return newExpresion
+
+    def substituLlavesCorchetesV2(self, expresion):
+        """
+        Sustiuye las aberturas de corchetes y de llaves y sus cerraduras por los equivalentes.
+        *@param expresion: la expresion a cambiar
+        """
+        newExpresion = ""
+        for x in expresion:
+            if(x == "]"):
+                newExpresion = newExpresion+')?'
+            elif(x == "}"):
+                newExpresion = newExpresion+')*'
+            if(x == "["):
+                newExpresion = newExpresion+'('
+            elif(x == "{"):
+                newExpresion = newExpresion+'('
+            else:
+                newExpresion += x
+
+        return newExpresion
+
+    def alterateRE(self, RE):
+        """
+        Altera una expresión regular agregándole puntos a la concatenacion para ser mas legible para el postfix
+        *@param RE: la expresión regular original
+        """
+        nuevaRE = ""
+        contador = 0
+        for x in range(0, len(RE)):
+            #print("EN EL CICLO S  ", RE[x])
+            #print("EN el ITER ES : ", RE[x+1:x+2])
+            nuevaRE += RE[x]
+            if(self.isOperand(RE[x]) or RE[x] == ")" or RE[x] == "*" or RE[x] == "#"):
+                contador += 1
+            if(RE[x+1:x+2] != " " and contador == 1):
+                if(self.isOperand(RE[x+1:x+2]) or RE[x+1:x+2] == "("):
+                    nuevaRE += "."
+                    contador = 0
+                else:
+                    contador = 0
+        return nuevaRE
+
     def sortString(self, str):
         """
         Hace sort de un string

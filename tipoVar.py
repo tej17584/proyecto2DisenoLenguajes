@@ -7,20 +7,49 @@ Propósito: Este programa tiene TODOS los posibles tipos de variable que pueden 
 V 1.0
 """
 #! zona de imports
+
 from enum import Enum
+from funciones import funciones
+
+# creamos una clase funciones
+funcioncitas = funciones()
+valorAny = funcioncitas.get_ANYSET()
 
 
-class tipoVar(int, Enum):
-    IDENT = 0
-    STRING = 1
-    NUMBER = 2
-    CHAR = 3
-    ANY = 4
+class tipoVar(Enum):
+    IDENT = 1
+    STRING = 2
+    NUMBER = 3
+    CHAR = 4
+    ANY = valorAny
     UNION = 5
     DIFFERENCE = 6
-    RANGE = 6
-    APPEND = 7
-    KLEENE = 8
-    LPAR = 9
-    RPAR = 10
-    OR = 11
+    RANGE = 7
+    APPEND = '.'
+    KLEENE = '*'
+    OR = '|'
+    LPARENTESIS = '('
+    RPARENTESIS = 8
+    EXCEPT = 9
+    KEYWORDS = 10
+    EPSILON = 15
+
+
+class variableER_Enum():
+    def __init__(self, identificador, valor) -> None:
+        """
+        ESta funcion es el init
+        *@param identificador: es el Enumerador
+        *@param valor: es el valor que tendrá
+        """
+        self.identificador = identificador
+        self.valorIdentificador = valor
+
+    def getIdenficador(self):
+        return self.identificador.name
+
+    def getValueIdentificador(self):
+        return self.valorIdentificador
+
+    def getValueFromIndentificadorENUM(self):
+        return self.identificador.value
