@@ -2,6 +2,7 @@
 from funciones import funciones
 from pprint import pprint as pp
 import difflib
+import re
 """ c2 = '"+"' not in 'digit+"ABCDEF".'
 print(c2)
  """
@@ -39,8 +40,32 @@ contador = 0
 for x in macros:
     contador = contador+1
     if(x == "'"):
-        pp(x)
+        print(" ")
 
-charnueve = chr(9)
-print(charnueve)
-print(set(charnueve))
+
+string = 'a"(H)"b'
+
+s = "abcacbAUG|GAC|UGAfjdalfd"
+start = string.find('"')
+contador = start+1
+print("Contador al inicio", contador)
+variableWhile = True
+while variableWhile:
+    if(string[contador] == '"'):
+        variableWhile = False
+    else:
+        contador = contador+1
+
+print("contador al final", contador)
+
+
+setAny = funcioncitas.get_ANYSET()
+
+
+alterada = funcioncitas.alterateRE("a")
+print(alterada)
+
+
+string = 'digit(digit)*".ab"digit(digit)*'
+
+print(len(".a"))
