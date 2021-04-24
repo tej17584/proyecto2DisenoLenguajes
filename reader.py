@@ -22,7 +22,7 @@ class Reader:
     """
 
     def __init__(self) -> None:
-        self.rutaFile = "ATGFilesExamples\ejemploProyecto.atg"
+        self.rutaFile = "ATGFilesExamples\DoubleP.ATG"
         self.streamCompleto = ""
         self.dictArchivoEntrada = ""
         self.lineasArchivo = []
@@ -35,6 +35,7 @@ class Reader:
         self.isChar = False
         self.isToken = False
         self.isKeyword = False
+        self.boolComillasPunto = False
         self.bannedPositionsString = []  # estas son las posiciones banneadas de stirngs
         self.readDocumentAndPoblateStream()
         self.readDocument()
@@ -368,19 +369,22 @@ class Reader:
 
             localDict = {}
             contadorDictTokens = 0
-            y = ""
+            acumuladorStrings = ""
             for x in newValorToken:
                 if(x == '(' and (contadorDictTokens not in self.bannedPositionsString)):
-                    newTipoVar = variableER_Enum(tipoVar.LPARENTESIS, x)
+                    newTipoVar = variableER_Enum(tipoVar.LPARENTESIS, ord(x))
                     localDict[contadorDictTokens] = newTipoVar
                 elif(x == ')' and (contadorDictTokens not in self.bannedPositionsString)):
-                    newTipoVar = variableER_Enum(tipoVar.RPARENTESIS, x)
+                    newTipoVar = variableER_Enum(tipoVar.RPARENTESIS, ord(x))
                     localDict[contadorDictTokens] = newTipoVar
                 elif(x == '*' and (contadorDictTokens not in self.bannedPositionsString)):
-                    newTipoVar = variableER_Enum(tipoVar.KLEENE, x)
+                    newTipoVar = variableER_Enum(tipoVar.KLEENE, ord(x))
                     localDict[contadorDictTokens] = newTipoVar
                 elif(x == 'ε' and (contadorDictTokens not in self.bannedPositionsString)):
-                    newTipoVar = variableER_Enum(tipoVar.EPSILON, x)
+                    newTipoVar = variableER_Enum(tipoVar.EPSILON, ord(x))
+                    localDict[contadorDictTokens] = newTipoVar
+                elif(x == '|' and (contadorDictTokens not in self.bannedPositionsString)):
+                    newTipoVar = variableER_Enum(tipoVar.OR, ord(x))
                     localDict[contadorDictTokens] = newTipoVar
                 elif(x == '"' and (contadorDictTokens not in self.bannedPositionsString)):
                     contadorComillas = 0
@@ -408,45 +412,99 @@ class Reader:
                                 self.bannedPositionsString.append(x)
                             """ valorEntrecomillas = re.findall(
                                 r'"(.*?)"', newValorToken[posicionInicialString-1:posicionFinalString]) """
-                            valorEntrecomillas = newValorToken[posicionInicialString: posicionFinalString]
+                            valorEntrecomillasInicial = newValorToken[posicionInicialString: posicionFinalString]
+                            if('.' in valorEntrecomillasInicial):
+                                self.boolComillasPunto = True
                             # le agregamos los puntos
-                            valorEntrecomillas = self.funciones.alterateRE(
-                                valorEntrecomillas)
+                            valorEntrecomillasFinal = self.funciones.alterateRE(
+                                valorEntrecomillasInicial)
                             # agregamos un append para mantener la unidad
                             newTipoVar = variableER_Enum(
-                                tipoVar.APPEND, ".")
+                                tipoVar.APPEND, ord("."))
                             localDict[contadorDictTokens] = newTipoVar
-                            self.bannedPositionsString.append(
-                                contadorDictTokens)
+                            # self.bannedPositionsString.append(
+                            # contadorDictTokens)
                             contadorDictTokens += 1
-                            for w in valorEntrecomillas:
-                                if(w == '.'):
-                                    varNuevaAppend = ""
-                                    varNuevaAppend = variableER_Enum(
-                                        tipoVar.APPEND, w)
-                                    localDict[contadorDictTokens] = varNuevaAppend
-                                else:
-                                    variableNueva = ""
-                                    variableNueva = variableER_Enum(
-                                        tipoVar.STRING, w)
-                                    localDict[contadorDictTokens] = variableNueva
-                                self.bannedPositionsString.append(
-                                    contadorDictTokens)
-                                contadorDictTokens = contadorDictTokens+1
+                            contadorInter = contadorDictTokens
+                            if(self.boolComillasPunto):
+                                for w in valorEntrecomillasFinal:
+                                    if(w == '_'):
+                                        varNuevaAppend = ""
+                                        varNuevaAppend = variableER_Enum(
+                                            tipoVar.APPEND, ord("."))
+                                        localDict[contadorInter] = varNuevaAppend
+                                        self.boolComillasPunto = False
+                                    else:
+                                        variableNueva = ""
+                                        variableNueva = variableER_Enum(
+                                            tipoVar.STRING, ord(w))
+                                        localDict[contadorInter] = variableNueva
+                                    """ self.bannedPositionsString.append(
+                                        contadorInter) """
+                                    contadorInter = contadorInter+1
+                            else:
+                                for w in valorEntrecomillasFinal:
+                                    if(w == '.'):
+                                        varNuevaAppend = ""
+                                        varNuevaAppend = variableER_Enum(
+                                            tipoVar.APPEND, ord("."))
+                                        localDict[contadorInter] = varNuevaAppend
+                                        self.boolComillasPunto = False
+                                    else:
+                                        variableNueva = ""
+                                        variableNueva = variableER_Enum(
+                                            tipoVar.STRING, ord(w))
+                                        localDict[contadorInter] = variableNueva
+                                    """ self.bannedPositionsString.append(
+                                        contadorInter) """
+                                    contadorInter = contadorInter+1
+                            print("el valor es :", valorEntrecomillasFinal)
+                            """ if(newValorToken[contadorDictTokens+1] != '' or newValorToken[contadorDictTokens+1] != ' ' and self.boolComillasPunto):
+                                print("el valor es :", valorEntrecomillasFinal)
+                                contadorDictTokens = start
+                            else:
+                                print("el valor es :", valorEntrecomillasFinal)
+                                contadorDictTokens = start """
+                        contadorDictTokens = start
+                else:  # de lo contrario acumulamos
+                    if(contadorDictTokens not in self.bannedPositionsString):
+                        acumuladorStrings += x
+                        wordExists, value = self.checkIfCharExists(
+                            acumuladorStrings)
+                        if(wordExists and len(value) > 0):  # si existe el char
+                            # convertimos los strings a ints
+                            newValueSet = funcioncitas.fromSetToOrd(value)
+                            newTipoVar = variableER_Enum(
+                                tipoVar.IDENT, newValueSet)
+                            newTipoVar.setNombreIdentificador(
+                                acumuladorStrings)
+                            start = newValorToken.find(acumuladorStrings)
+                            localDict[contadorDictTokens] = newTipoVar
+                            if(newValorToken[contadorDictTokens+1] == '(' or newValorToken[contadorDictTokens+1] == '[' or newValorToken[contadorDictTokens+1] == '{'):
+                                newTipoVar = variableER_Enum(
+                                    tipoVar.APPEND, ord('.'))
+                                localDict[contadorDictTokens+1] = newTipoVar
+                                contadorDictTokens += 1
+                                """ print("EStoy en el ident ", acumuladorStrings)
+                                print("este es el siguiente caracter ",
+                                    newValorToken[contadorDictTokens], " pos ", contadorDictTokens) """
+                            # agregamos TODAS las posiciones banneadas
+                            acumuladorStrings = ""
+                        elif(acumuladorStrings == "EXCEPT"):
+                            print("el contador es : ", contadorDictTokens)
+                            print("YASSS")
 
-                            print("el valor es :", valorEntrecomillas)
-                            contadorDictTokens = start
                 contadorDictTokens += 1
 
             self.jsonFinal["TOKENS"][llaveToken] = localDict
             contadorDictTokens = 0
 
-        print(self.jsonFinal["TOKENS"])
+        print(self.jsonFinal["CHARACTERS"])
         for llave, valor in self.jsonFinal["TOKENS"].items():
             print("LLAVE: ", llave)
             for numeroItem, valorItem in valor.items():
                 print(
-                    f'Identificador: {valorItem.getIdenficador()} valor: {valorItem.getValueIdentificador()}')
+                    f'Identificador: {valorItem.getIdenficador()} value: {valorItem.getValueIdentificador()}')
 
         """ for x, y in self.jsonFinal.items():
             for valor, pedazito in y.items():
