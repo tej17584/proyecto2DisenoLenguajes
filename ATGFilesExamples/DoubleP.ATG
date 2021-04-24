@@ -19,7 +19,7 @@ do = "do".
 TOKENS
 
 number = digit{digit}.
-decnumber = digit{digit}"abcdef"digit{digit}.
+decnumber = digit{digit}"."digit{digit}.
 white = digit{digit}.
 
 
