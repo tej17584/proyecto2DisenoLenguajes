@@ -65,6 +65,15 @@ class funciones():
             return True
         return False
 
+    def isOperandV2(self, ch):
+        """
+        REtorna TRUE si el caracter ingresado es un alfanumerico, FALSE de lo contrario
+        *@param ch: el caracter a ser probado
+        """
+        if ch.isalpha():
+            return True
+        return False
+
     def is_op(self, a):
         """
         Testeamos si el caracter de entrada es un operando
@@ -73,27 +82,6 @@ class funciones():
         if a == '+' or a == '-':
             return True
         return False
-
-    def alterateRE(self, RE):
-        """
-        Altera una expresión regular agregándole puntos a la concatenacion para ser mas legible para el postfix
-        *@param RE: la expresión regular original
-        """
-        nuevaRE = ""
-        contador = 0
-        for x in range(0, len(RE)):
-            #print("EN EL CICLO S  ", RE[x])
-            #print("EN el ITER ES : ", RE[x+1:x+2])
-            nuevaRE += RE[x]
-            if(RE[x] == ")" or RE[x] == "*"):
-                contador += 1
-            if(RE[x+1:x+2] != " " and contador == 1):
-                if(RE[x+1:x+2] == "("):
-                    nuevaRE += "."
-                    contador = 0
-                else:
-                    contador = 0
-        return nuevaRE
 
     def alterateAskChain(self, exp):
         """
@@ -157,6 +145,26 @@ class funciones():
 
         return newExpresion
 
+    def fromSetToOrd(self, setToOrd):
+        """
+        Esta funcion convierte un set con characteres a un set de ords
+        *@param setToOrd: el set a ser convertido
+        """
+        newSet = set()
+        for x in setToOrd:
+            newSet.add(ord(x))
+        return newSet
+
+    def fromOrdToString(self, ordToString):
+        """
+        Esta funcion convierte un set de ints en strings
+        *@param setToOrd: el set a ser convertido
+        """
+        newSet = set()
+        for x in ordToString:
+            newSet.add(chr(x))
+        return newSet
+
     def alterateRE(self, RE):
         """
         Altera una expresión regular agregándole puntos a la concatenacion para ser mas legible para el postfix
@@ -164,14 +172,49 @@ class funciones():
         """
         nuevaRE = ""
         contador = 0
+        if('.' in RE):
+            for x in range(0, len(RE)):
+                # print("EN EL CICLO S  ", RE[x])
+                # print("EN el ITER ES : ", RE[x+1:x+2])
+                nuevaRE += RE[x]
+                if(self.isOperand(RE[x]) or RE[x] == ")" or RE[x] == "*" or RE[x] == "#"):
+                    contador += 1
+                if(RE[x+1:x+2] != " " and contador == 1):
+                    if(self.isOperand(RE[x+1:x+2]) or RE[x+1:x+2] == "("):
+                        nuevaRE += "_"
+                        contador = 0
+                    else:
+                        contador = 0
+        else:
+            for x in range(0, len(RE)):
+                # print("EN EL CICLO S  ", RE[x])
+                # print("EN el ITER ES : ", RE[x+1:x+2])
+                nuevaRE += RE[x]
+                if(self.isOperand(RE[x]) or RE[x] == ")" or RE[x] == "*" or RE[x] == "#"):
+                    contador += 1
+                if(RE[x+1:x+2] != " " and contador == 1):
+                    if(self.isOperand(RE[x+1:x+2]) or RE[x+1:x+2] == "("):
+                        nuevaRE += "."
+                        contador = 0
+                    else:
+                        contador = 0
+        return nuevaRE
+
+    def alterateREV2(self, RE):
+        """
+        Altera una expresión regular agregándole puntos a la concatenacion para ser mas legible para el postfix
+        *@param RE: la expresión regular original
+        """
+        nuevaRE = ""
+        contador = 0
         for x in range(0, len(RE)):
-            #print("EN EL CICLO S  ", RE[x])
-            #print("EN el ITER ES : ", RE[x+1:x+2])
+            # print("EN EL CICLO S  ", RE[x])
+            # print("EN el ITER ES : ", RE[x+1:x+2])
             nuevaRE += RE[x]
-            if(self.isOperand(RE[x]) or RE[x] == ")" or RE[x] == "*" or RE[x] == "#"):
+            if(RE[x] == ")" or RE[x] == "}" or RE[x] == "]" or RE[x] == "*" or RE[x] == "#" or RE[x] == "["):
                 contador += 1
             if(RE[x+1:x+2] != " " and contador == 1):
-                if(self.isOperand(RE[x+1:x+2]) or RE[x+1:x+2] == "("):
+                if(self.isOperandV2(RE[x+1:x+2]) or RE[x+1:x+2] == "(" or RE[x+1:x+2] == "{" or RE[x+1:x+2] == "["):
                     nuevaRE += "."
                     contador = 0
                 else:
