@@ -44,6 +44,7 @@ class variableER_Enum():
         """
         self.identificador = identificador
         self.valorIdentificador = valor
+        self.nombreIdentificador = ""
 
     def getIdenficador(self):
         return self.identificador.name
@@ -53,3 +54,9 @@ class variableER_Enum():
 
     def getValueFromIndentificadorENUM(self):
         return self.identificador.value
+
+    def setNombreIdentificador(self, nombre):
+        self.nombreIdentificador = nombre
+
+    def getNombreIdentificador(self):
+        return self.nombreIdentificador
