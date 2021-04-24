@@ -22,7 +22,7 @@ class Reader:
     """
 
     def __init__(self) -> None:
-        self.rutaFile = "ATGFilesExamples\DoubleP.ATG"
+        self.rutaFile = "ATGFilesExamples\HexNumberP.ATG"
         self.streamCompleto = ""
         self.dictArchivoEntrada = ""
         self.lineasArchivo = []
@@ -488,6 +488,12 @@ class Reader:
                                 """ print("EStoy en el ident ", acumuladorStrings)
                                 print("este es el siguiente caracter ",
                                     newValorToken[contadorDictTokens], " pos ", contadorDictTokens) """
+                            elif(newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == '*' or newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == ')' or newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == ']' or newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == '}'):
+                                newTipoVar = variableER_Enum(
+                                    tipoVar.APPEND, ord('.'))
+                                localDict[contadorDictTokens -
+                                          len(acumuladorStrings)] = newTipoVar
+                                contadorDictTokens += 1
                             # agregamos TODAS las posiciones banneadas
                             acumuladorStrings = ""
                         elif(acumuladorStrings == "EXCEPT"):
