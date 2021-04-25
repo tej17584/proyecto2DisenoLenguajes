@@ -236,7 +236,19 @@ class Reader:
                             array = array.replace('.', '')
                             charValue1 = charValue1.replace(
                                 x, array)  # reemplazamos el valor
-
+                    for x in arrayCharacters:
+                        x = x.replace('.', '')
+                        # esta función retorna el valor del char a sustiuir y su contenido
+                        charExists, array = self.checkIfCharExists(x)
+                        if(charExists and len(x) > 0 and len(array) > 0):  # si existe
+                            array = array.replace('.', '')
+                            charValue = charValue.replace(
+                                x, array)  # reemplazamos el valor
+                    #! verificamos si hay un .. en el character
+                    if('..' in charValue1 and ('CHR(' not in charValue1)):
+                        charValue1Modificado = self.funciones.getRangeFromLetters(
+                            charValue1)
+                        charValue1 = charValue1Modificado
                     # ? Ahora verificamos si tiene algún CHAR
                     if('CHR(' in charValue):
                         if('-' in charValue or '+' in charValue):
@@ -260,7 +272,8 @@ class Reader:
                                     charAOperar = x  # este el que nos interesa sustutuir
                             for y in splitporOperando:
                                 if('CHR(' not in y):
-                                    charASumador = y  # este char es el que SUMA
+                                    # este char es el que SUMA
+                                    charASumador.append(y.replace(" ", ""))
                             sustitucionTokens = self.replaceCharValues(
                                 charAOperar)
                             localEvaluador2 = Conversion()
@@ -272,8 +285,9 @@ class Reader:
                             contador = 0
                             for w in postfixCharValue:
                                 if(w == charAOperar.replace(" ", "")):
-                                    postfixCharValue[contador] = sustitucionTokens
-                                elif(w == charASumador.replace(" ", "")):
+                                    postfixCharValue[contador] = self.funciones.getBetweenComillaSandComillaDoble(
+                                        sustitucionTokens.replace(" ", ""))
+                                elif(w in charASumador):
                                     postfixCharValue[contador] = self.funciones.getBetweenComillaSandComillaDoble(
                                         w)
                                 contador += 1
@@ -356,7 +370,12 @@ class Reader:
             if(isinstance(valor, str)):
                 valor = self.funciones.getBetweenComillaSandComillaDoble(
                     valor)
-                self.jsonFinal["CHARACTERS"][llave] = set(valor)
+                newValor = self.funciones.fromSetToOrd(valor)
+                self.jsonFinal["CHARACTERS"][llave] = set(newValor)
+            elif(isinstance(valor, set)):
+                newValor = self.funciones.fromSetToOrd(valor)
+                self.jsonFinal["CHARACTERS"][llave] = newValor
+
         # ahora valuamos Susituimos el valor de los tokens por otros mas conocidos
         for llaveToken, valorToken in self.jsonFinal["TOKENS"].items():
             newValorToken = self.funciones.substituLlavesCorchetes(valorToken)
@@ -473,13 +492,14 @@ class Reader:
                             acumuladorStrings)
                         if(wordExists and len(value) > 0):  # si existe el char
                             # convertimos los strings a ints
-                            newValueSet = funcioncitas.fromSetToOrd(value)
-                            newTipoVar = variableER_Enum(
+                            # funcioncitas.fromSetToOrd(value)
+                            newValueSet = value
+                            newTipoVarEntero = variableER_Enum(
                                 tipoVar.IDENT, newValueSet)
-                            newTipoVar.setNombreIdentificador(
+                            newTipoVarEntero.setNombreIdentificador(
                                 acumuladorStrings)
                             start = newValorToken.find(acumuladorStrings)
-                            localDict[contadorDictTokens] = newTipoVar
+                            localDict[contadorDictTokens] = newTipoVarEntero
                             if(newValorToken[contadorDictTokens+1] == '(' or newValorToken[contadorDictTokens+1] == '[' or newValorToken[contadorDictTokens+1] == '{'):
                                 newTipoVar = variableER_Enum(
                                     tipoVar.APPEND, ord('.'))
@@ -491,8 +511,9 @@ class Reader:
                             elif(newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == '*' or newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == ')' or newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == ']' or newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == '}'):
                                 newTipoVar = variableER_Enum(
                                     tipoVar.APPEND, ord('.'))
-                                localDict[contadorDictTokens -
-                                          len(acumuladorStrings)] = newTipoVar
+                                resta = contadorDictTokens - \
+                                    len(acumuladorStrings)+1
+                                localDict[resta] = newTipoVar
                                 contadorDictTokens += 1
                             # agregamos TODAS las posiciones banneadas
                             acumuladorStrings = ""
@@ -504,6 +525,7 @@ class Reader:
 
             self.jsonFinal["TOKENS"][llaveToken] = localDict
             contadorDictTokens = 0
+            self.bannedPositionsString = []
 
         print(self.jsonFinal["CHARACTERS"])
         for llave, valor in self.jsonFinal["TOKENS"].items():
