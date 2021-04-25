@@ -178,6 +178,8 @@ class Conversion:
                 for x in i:
                     if(self.funciones.isOperand(x)):
                         local = local+x
+                    elif(i == "'+'" or i == "'-'"):
+                        local = local+i
                         # si el componente es un integer
                 self.push2(local)
                 local = ""
