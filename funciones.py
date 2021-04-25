@@ -18,7 +18,7 @@ class funciones():
                               "3": "D", "4": "E", "5": "F",
                               "6": "G", "7": "H",
                               "8": "I", "9": "J"}
-        self.ANYSET = set([chr(char) for char in range(0, 255)])
+        self.ANYSET = set([chr(char) for char in range(0, 256)])
 
     def get_ANYSET(self):
         """
@@ -220,6 +220,26 @@ class funciones():
                 else:
                     contador = 0
         return nuevaRE
+
+    def getRangeFromLetters(self, linea):
+        """
+        ESta funcion obtiene el rango de entre dos valores y entre lineas
+        *@param linea: es la linea
+        """
+        arryLine = linea.split("..")
+        newLine = ""
+        arrayIntegers = []
+        for letra in arryLine:
+            for char in letra:
+                if(char.isalpha()):
+                    print(char)
+                    arrayIntegers.append(ord(char))
+                    break
+
+        for char in range(arrayIntegers[0], arrayIntegers[1]+1):
+            newLine += chr(char)
+
+        return newLine
 
     def sortString(self, str):
         """
