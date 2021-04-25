@@ -22,7 +22,7 @@ class Reader:
     """
 
     def __init__(self) -> None:
-        self.rutaFile = "ATGFilesExamples\HexNumberP.ATG"
+        self.rutaFile = "ATGFilesExamples\CoCoLP.ATG"
         self.streamCompleto = ""
         self.dictArchivoEntrada = ""
         self.lineasArchivo = []
@@ -145,8 +145,12 @@ class Reader:
                         x[int(posicionInicialCHR+1):int(posicionFInalCHR)] +\
                         ')'
                     # print("")
-                    charValue = charValue.replace(
-                        stringReplace, '"' + valorChar + '"')
+                    if(valorChar == '"'):
+                        charValue = charValue.replace(
+                            stringReplace, valorChar)
+                    else:
+                        charValue = charValue.replace(
+                            stringReplace, '"' + valorChar + '"')
 
         return charValue
 
@@ -233,17 +237,31 @@ class Reader:
                         # esta función retorna el valor del char a sustiuir y su contenido
                         charExists, array = self.checkIfCharExists(x)
                         if(charExists and len(x) > 0 and len(array) > 0):  # si existe
-                            array = array.replace('.', '')
-                            charValue1 = charValue1.replace(
-                                x, array)  # reemplazamos el valor
+                            if(isinstance(array, str)):
+                                array = array.replace('.', '')
+                                charValue1 = charValue1.replace(
+                                    x, array)  # reemplazamos el valor
+                            elif(isinstance(array, set)):
+                                setString = self.funciones.fromSetToSTring(
+                                    array)
+                                setString = setString.replace('.', '')
+                                charValue1 = charValue1.replace(
+                                    x, setString)  # reemplazamos el valor
                     for x in arrayCharacters:
                         x = x.replace('.', '')
                         # esta función retorna el valor del char a sustiuir y su contenido
                         charExists, array = self.checkIfCharExists(x)
                         if(charExists and len(x) > 0 and len(array) > 0):  # si existe
-                            array = array.replace('.', '')
-                            charValue = charValue.replace(
-                                x, array)  # reemplazamos el valor
+                            if(isinstance(array, str)):
+                                array = array.replace('.', '')
+                                charValue = charValue.replace(
+                                    x, array)  # reemplazamos el valor
+                            elif(isinstance(array, set)):
+                                setString = self.funciones.fromSetToSTring(
+                                    array)
+                                setString = setString.replace('.', '')
+                                charValue = charValue.replace(
+                                    x, setString)  # reemplazamos el valor
                     #! verificamos si hay un .. en el character
                     if('..' in charValue1 and ('CHR(' not in charValue1)):
                         charValue1Modificado = self.funciones.getRangeFromLetters(
@@ -308,19 +326,35 @@ class Reader:
                     if('+' in charValue1 or '-' in charValue1):
                         localEvaluador2 = Conversion()
                         charValue1 = charValue1.replace(" ", "")
-                        postfixCharValue = localEvaluador2.infixToPostfix(
-                            charValue1)  # hacemos la expresion postfix
-                        # hacemos split
-                        postfixCharValue = postfixCharValue.split(' ')
-                        # operamos el postfix, para que nos lo retorne bien
-                        operatedCharValue = localEvaluador2.operatePostFix(
-                            postfixCharValue)
-                        # si resulta que no es operable no actualizamos
-                        if(operatedCharValue != "NO_OPERABLE"):
-                            # operatedCharValue = operatedCharValue.replace(
-                            #    '"', '')  # reemplazamos los '"' con vacíos
-                            charValue1 = operatedCharValue  # igaualamos
-                            charValue1 = charValue1  # agregamos
+                        if("'+'" in charValue1 or "'-'" in charValue1):
+                            arrayPartido = charValue.split(' ')
+                            postfixCharValue = localEvaluador2.infixToPostfix(
+                                arrayPartido)  # hacemos la expresion postfix
+                            # hacemos split
+                            postfixCharValue = postfixCharValue.split(' ')
+                            # operamos el postfix, para que nos lo retorne bien
+                            operatedCharValue = localEvaluador2.operatePostFix(
+                                postfixCharValue)
+                            # si resulta que no es operable no actualizamos
+                            if(operatedCharValue != "NO_OPERABLE"):
+                                # operatedCharValue = operatedCharValue.replace(
+                                #    '"', '')  # reemplazamos los '"' con vacíos
+                                charValue1 = operatedCharValue  # igaualamos
+                                charValue1 = charValue1  # agregamos
+                        else:
+                            postfixCharValue = localEvaluador2.infixToPostfix(
+                                charValue1)  # hacemos la expresion postfix
+                            # hacemos split
+                            postfixCharValue = postfixCharValue.split(' ')
+                            # operamos el postfix, para que nos lo retorne bien
+                            operatedCharValue = localEvaluador2.operatePostFix(
+                                postfixCharValue)
+                            # si resulta que no es operable no actualizamos
+                            if(operatedCharValue != "NO_OPERABLE"):
+                                # operatedCharValue = operatedCharValue.replace(
+                                #    '"', '')  # reemplazamos los '"' con vacíos
+                                charValue1 = operatedCharValue  # igaualamos
+                                charValue1 = charValue1  # agregamos
 
                     localDictChar[charName] = charValue1
                     self.jsonFinal["CHARACTERS"].update(localDictChar)
@@ -375,6 +409,7 @@ class Reader:
             elif(isinstance(valor, set)):
                 newValor = self.funciones.fromSetToOrd(valor)
                 self.jsonFinal["CHARACTERS"][llave] = newValor
+        print(self.jsonFinal["CHARACTERS"])
 
         # ahora valuamos Susituimos el valor de los tokens por otros mas conocidos
         for llaveToken, valorToken in self.jsonFinal["TOKENS"].items():
