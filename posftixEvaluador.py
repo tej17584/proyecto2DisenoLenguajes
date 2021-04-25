@@ -165,14 +165,14 @@ class Conversion:
                         preval1)
                     val2 = self.funciones.getBetweenComillaSandComillaDoble(
                         preval2)
-                    val1 = set(preval1)
-                    val2 = set(preval2)
+                    val1final = set(val1)
+                    val2final = set(val2)
                     # hacemos un switch para saber cual operacion es cual
                     """ switcher = {
                         '+': self.funciones.unionTwoStrings(val2, val1),
                         '-': self.funciones.differenceTwoStrings(val2, val1)} """
                     switcher = {
-                        '+': val2.union(val1), '-': val2.difference(val1)}
+                        '+': val2final.union(val1final), '-': val2final.difference(val1final)}
                     self.push2(switcher.get(i))
             else:
                 for x in i:
