@@ -79,7 +79,7 @@ class funciones():
         Testeamos si el caracter de entrada es un operando
         *@param a: caracter a ser probado
         """
-        if a == '+' or a == '-':
+        if (a == '+' or a == '-') and (a != "'+'" or a != "'-'"):
             return True
         return False
 
@@ -164,6 +164,17 @@ class funciones():
         for x in ordToString:
             newSet.add(chr(x))
         return newSet
+
+    def fromSetToSTring(self, setToTransform):
+        """
+        Esta funcion convierte un set a un string concatenado
+        *@param setToTransform: el set a convertir
+        """
+        nuevoString = ""
+        for x in setToTransform:
+            nuevoString += x
+
+        return nuevoString
 
     def alterateRE(self, RE):
         """
@@ -293,11 +304,14 @@ class funciones():
             elif x == "'":
                 contadorComillaSimple += 1
 
-        if(contadorComilla >= 2 and contadorComillaSimple < 2):
+        if(contadorComilla == 2 and contadorComillaSimple < 2):
             return value.replace('"', '')
         elif(contadorComilla < 2 and contadorComillaSimple >= 2):
             value = value.replace("'", '')
             return value
+        elif(contadorComilla > 2):
+            print("ACA")
+            print(value)
 
         return value
 
