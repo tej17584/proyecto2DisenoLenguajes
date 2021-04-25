@@ -2,7 +2,7 @@ COMPILER MyCOCOR
 (.//Especificacion de Funciones.)
 CHARACTERS
 
-letter= "ABCDEFGHIJKLMN�OPQRSTUVWXYZabcdefghijklmn�opqrstuvwxyz".
+letter= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".
 digit= "0123456789".
 
 cr = CHR(13).
@@ -12,7 +12,7 @@ ignore = cr+lf+tab.
 comillas = CHR(34).
 stringletter = ANY-comillas-ignore.
 
-operadores ="+-=()[]{}|.<>".
+operadores = "()[]{}|.<>".
 MyANY = ANY-operadores.
 
 TOKENS
