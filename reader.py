@@ -625,14 +625,14 @@ class Reader:
             newTipoVar = variableER_Enum(
                 tipoVar.RPARENTESIS, ord(")"))
             localDict[contadorDictTokens] = newTipoVar
-
+            contadorDictTokens += 1
             # creamos un nuevo diccionario
             localDictEncerrado = {}
-            contadorEncerrado = 0
+            contadorEncerrado = contadorDictTokens
             newTipoVar = variableER_Enum(
                 tipoVar.LPARENTESIS, ord("("))
             localDictEncerrado[contadorEncerrado] = newTipoVar
-            contadorEncerrado += 2
+            contadorEncerrado += 1
             for llave, valor in localDict.items():
                 localDictEncerrado[contadorEncerrado] = valor
                 contadorEncerrado += 1
