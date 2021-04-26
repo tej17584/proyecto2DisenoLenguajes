@@ -67,5 +67,17 @@ print(alterada)
 
 
 string = 'digit(digit)*".ab"digit(digit)*'
+string2 = 'hexdigit(hexdigit)*hextermEXCEPTKEYWORDS'
+print(string2[26-len("hexterm")-1])
 
-print(len(".a"))
+
+string1 = "{'J', 'A', 'M', 'C', 'W', 'i', 'b', 'p', 'E', 'r', 'H', 'z', 'T', 'h', 'P', 'a', 'j', 'k', 'v', 'l', 'u', 'f', 'c', 'L', 'Y', 'B', 'V', 'F', 'U', 'Z', 'I', 'Q', 'e', 'K', 't', 's', 'G', 'x', 'o', 'O', 'N', 'D', 'R', 'X', 'q', 'S', 'd', 'm', 'w', 'n', 'y', 'g'}"
+
+string = 'comillas(stringletter(stringletter)*)comillas'
+
+string4 = '((sign)|e)digit(digit)*'
+string5 = 'hexdigit(hexdigit)*hextermEXCEPTKEYWORDS'
+string6 = 'digit(digit)*'
+print(len("digit"))
+print(string5[26-len("hexterm")-1])
+print(string6[-1])
