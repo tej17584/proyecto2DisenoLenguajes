@@ -33,6 +33,7 @@ class tipoVar(Enum):
     EXCEPT = 9
     KEYWORDS = 10
     EPSILON = 15
+    ACEPTACION = ""
 
 
 class variableER_Enum():
