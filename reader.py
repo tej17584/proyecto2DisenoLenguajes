@@ -422,11 +422,12 @@ class Reader:
                 newValorTokenAskVerification)
             newValorToken = newValorToken.replace(" ", "")
             # acá empieza la logica de sustiticion
-            #print("VAlor por el token ", newValorToken)
+            # print("VAlor por el token ", newValorToken)
             localDict = {}
             contadorDictTokens = 0
             acumuladorStrings = ""
             acumuladorExcept = ""
+
             for x in newValorToken:
                 if(x == '(' and (contadorDictTokens not in self.bannedPositionsString)):
                     newTipoVar = variableER_Enum(tipoVar.LPARENTESIS, ord(x))
@@ -454,7 +455,7 @@ class Reader:
                             contador = start+1
                             # agregamos esta posicion como ya no usable
                             posicionInicialString = contador
-                            #print("Contador al inicio", posicionInicialString)
+                            # print("Contador al inicio", posicionInicialString)
                             variableWhile = True
                             while variableWhile:
                                 if(newValorToken[contador] == '"'):
@@ -463,7 +464,7 @@ class Reader:
                                     contador = contador+1
                             # agregamos esta posicion como ya no usable
                             posicionFinalString = contador
-                            #print("contador al final", posicionFinalString)
+                            # print("contador al final", posicionFinalString)
                             # agregamos TODAS las posiciones banneadas
                             for x in range(posicionInicialString, posicionFinalString+1):
                                 self.bannedPositionsString.append(x)
@@ -594,9 +595,10 @@ class Reader:
 
                             # agregamos TODAS las posiciones banneadas
                             acumuladorStrings = ""
-                        elif(acumuladorStrings == "EXCEPT"):
+                        """ elif(acumuladorStrings == "EXCEPT"):
                             # colocamos la variable global en true
                             self.isEXCET = True
+                            acumuladorStrings = ""
                         elif(self.isEXCET):
                             self.acumuladorExcept += x
                             if(self.acumuladorExcept == "KEYWORDS"):
@@ -605,11 +607,35 @@ class Reader:
                                 newTipoVar = variableER_Enum(
                                     tipoVar.EXCEPT, self.jsonFinal["KEYWORDS"])
                                 newTipoVar.setNombreIdentificador("KEYWORDS")
-                                localDict[contadorDictTokens] = newTipoVar
+                                localDict[contadorDictTokens] = newTipoVar """
 
                 contadorDictTokens += 1
 
-            self.jsonFinal["TOKENS"][llaveToken] = localDict
+            newTipoVar = variableER_Enum(
+                tipoVar.APPEND, ord("."))
+            localDict[contadorDictTokens] = newTipoVar
+            contadorDictTokens += 1
+            newTipoVar = variableER_Enum(
+                tipoVar.ACEPTACION, ('#-'+llaveToken))
+            newTipoVar.setNombreIdentificador(llaveToken)
+            localDict[contadorDictTokens] = newTipoVar
+            contadorDictTokens += 1
+            # ahora cerramos el parentesis
+            newTipoVar = variableER_Enum(
+                tipoVar.RPARENTESIS, ord(")"))
+            localDict[contadorDictTokens] = newTipoVar
+
+            # creamos un nuevo diccionario
+            localDictEncerrado = {}
+            contadorEncerrado = 0
+            newTipoVar = variableER_Enum(
+                tipoVar.LPARENTESIS, ord("("))
+            localDictEncerrado[contadorEncerrado] = newTipoVar
+            contadorEncerrado += 1
+            for llave, valor in localDict.items():
+                localDictEncerrado[contadorEncerrado] = valor
+                contadorEncerrado += 1
+            self.jsonFinal["TOKENS"][llaveToken] = localDictEncerrado
             contadorDictTokens = 0
             self.bannedPositionsString = []
 
