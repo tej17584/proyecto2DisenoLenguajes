@@ -57,6 +57,24 @@ class Reader:
             contador = contador+1
         # print("Stream completo ", self.streamCompleto)
 
+    def getTokensFinales(self):
+        """
+        REtorna los tokens
+        """
+        return self.jsonFinal["TOKENS"]
+
+    def getCharactersFinales(self):
+        """
+        REtorna los characters
+        """
+        return self.jsonFinal["CHARACTERS"]
+
+    def getKeywordsFinales(self):
+        """
+        REtorna los KEYWORDS
+        """
+        return self.jsonFinal["KEYWORDS"]
+
     def checkIfCharExists(self, character):
 
         for llave, valor in self.jsonFinal.items():
@@ -411,7 +429,7 @@ class Reader:
             elif(isinstance(valor, set)):
                 newValor = self.funciones.fromSetToOrd(valor)
                 self.jsonFinal["CHARACTERS"][llave] = newValor
-        print(self.jsonFinal["CHARACTERS"])
+        # print(self.jsonFinal["CHARACTERS"])
 
         # ahora valuamos Susituimos el valor de los tokens por otros mas conocidos
         for llaveToken, valorToken in self.jsonFinal["TOKENS"].items():
@@ -641,14 +659,14 @@ class Reader:
             contadorDictTokens = 0
             self.bannedPositionsString = []
 
-        print(self.jsonFinal["KEYWORDS"])
+        """  print(self.jsonFinal["KEYWORDS"])
         for llave, valor in self.jsonFinal["TOKENS"].items():
             print("LLAVE: ", llave)
             print(self.jsonFinal["TOKENS"][llave])
-            #for numeroItem, valorItem in valor.items():
+            # for numeroItem, valorItem in valor.items():
                 # print(
                 # f'Identificador: {valorItem.getIdenficador()} value: {valorItem.getValueIdentificador()}')
-                #print(valorItem)
+                # print(valorItem) """
 
         """ for x, y in self.jsonFinal.items():
             for valor, pedazito in y.items():

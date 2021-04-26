@@ -7,7 +7,6 @@ Propósito: ESte programa tiene funciones útiles
 V 1.0
 """
 import json
-from tipoVar import *
 
 
 class funciones():
