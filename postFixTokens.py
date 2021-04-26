@@ -13,7 +13,7 @@ from tipoVar import *
 from pprint import pprint as pp
 
 
-class ConversionPostfix:
+class ConversionPostfixTokens:
     # Constructor de las variables
     def __init__(self):
         self.top = -1
@@ -113,7 +113,7 @@ class ConversionPostfix:
 """ funcioncitas = funciones()
 expresion = input('Ingresa una expresión:  ')
 expresion = expresion.replace(' ', '')
-obj = ConversionPostfix()
+obj = ConversionPostfixTokens()
 expresionAlterada = funcioncitas.alterateREPosftixToken(expresion)
 postFixValue = obj.infixToPostfix(expresionAlterada)
 print(f'El resultado es: {postFixValue}') """

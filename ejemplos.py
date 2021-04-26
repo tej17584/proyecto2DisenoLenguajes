@@ -97,7 +97,7 @@ diccionarioValores = {0: LParentesis1, 1: Ident1, 2: APPEND1,
                       9: Rparetensis2}
 
 
-clasePosftix = ConversionPostfix()
+clasePosftix = ConversionPostfixTokens()
 posftix = clasePosftix.infixToPostfix(diccionarioValores)
 for x in posftix:
     print(f'EL valor del token es: ', x.getIdenficador())

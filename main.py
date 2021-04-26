@@ -13,8 +13,14 @@ from pprint import pprint as pp
 from posftixEvaluador import *
 from tipoVar import *
 from postFixTokens import *
+from reader import *
 import re
 import os
+
+
+# creamos las instancias de clases
+instancia_reader = Reader()
+instancia_funciones = funciones()
 
 
 def menu():
@@ -37,13 +43,22 @@ while True:
 
         expresion = ""
         palabra = ""
-        print("Opcion 1")
+        # primero obtenemos los tokens finales
+        tokensFinales = instancia_reader.getTokensFinales()
+        for llave, valueforPostfix in tokensFinales.items():
+            instancia_posftixTokens = ConversionPostfixTokens()
+            posftix = instancia_posftixTokens.infixToPostfix(valueforPostfix)
+            pp(f'El postix de {llave} es')
+            for x in posftix:
+                pp(f' {x.getIdenficador()}  {x.getNombreIdentificador()}')
+
+        input("Presiona ENTER para regresar al menú")
         """  # Probamos la funcionalidad
         expresion = input('Ingresa una expresión regular:  ')
         expresion = expresion.replace(' ', '')
         palabra = input('Ingresa una cadena para probar en los AFN:  ')
         palabra = palabra.replace(' ', '')
-        obj = ConversionPostfix()
+        obj = ConversionPostfixTokens()
         conversion = funciones()
         expresionAlterada1 = conversion.alterateAskChain(expresion)
         expresionAlterada2 = conversion.alteratePlusChain(expresionAlterada1)
