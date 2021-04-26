@@ -22,7 +22,7 @@ class Reader:
     """
 
     def __init__(self) -> None:
-        self.rutaFile = "ATGFilesExamples\CoCoLP.ATG"
+        self.rutaFile = "ATGFilesExamples\HexNumberP.ATG"
         self.streamCompleto = ""
         self.dictArchivoEntrada = ""
         self.lineasArchivo = []
@@ -420,7 +420,7 @@ class Reader:
                 newValorTokenAskVerification)
             newValorToken = newValorToken.replace(" ", "")
             # acá empieza la logica de sustiticion
-
+            print("VAlor por el token ", newValorToken)
             localDict = {}
             contadorDictTokens = 0
             acumuladorStrings = ""
@@ -472,13 +472,16 @@ class Reader:
                             # le agregamos los puntos
                             valorEntrecomillasFinal = self.funciones.alterateRE(
                                 valorEntrecomillasInicial)
-                            # agregamos un append para mantener la unidad
-                            newTipoVar = variableER_Enum(
-                                tipoVar.APPEND, ord("."))
-                            localDict[contadorDictTokens] = newTipoVar
-                            # self.bannedPositionsString.append(
-                            # contadorDictTokens)
-                            contadorDictTokens += 1
+                            indexdePalabra = newValorToken.find(
+                                valorEntrecomillasInicial)
+                            if(indexdePalabra != 1):
+                                # agregamos un append para mantener la unidad
+                                newTipoVar = variableER_Enum(
+                                    tipoVar.APPEND, ord("."))
+                                localDict[contadorDictTokens] = newTipoVar
+                                # self.bannedPositionsString.append(
+                                # contadorDictTokens)
+                                contadorDictTokens += 1
                             contadorInter = contadorDictTokens
                             if(self.boolComillasPunto):
                                 for w in valorEntrecomillasFinal:
@@ -512,7 +515,7 @@ class Reader:
                                     """ self.bannedPositionsString.append(
                                         contadorInter) """
                                     contadorInter = contadorInter+1
-                            print("el valor es :", valorEntrecomillasFinal)
+                            # print("el valor es :", valorEntrecomillasFinal)
                             """ if(newValorToken[contadorDictTokens+1] != '' or newValorToken[contadorDictTokens+1] != ' ' and self.boolComillasPunto):
                                 print("el valor es :", valorEntrecomillasFinal)
                                 contadorDictTokens = start
@@ -535,26 +538,61 @@ class Reader:
                                 acumuladorStrings)
                             start = newValorToken.find(acumuladorStrings)
                             localDict[contadorDictTokens] = newTipoVarEntero
-                            if(newValorToken[contadorDictTokens+1] == '(' or newValorToken[contadorDictTokens+1] == '[' or newValorToken[contadorDictTokens+1] == '{'):
-                                newTipoVar = variableER_Enum(
-                                    tipoVar.APPEND, ord('.'))
-                                localDict[contadorDictTokens+1] = newTipoVar
-                                contadorDictTokens += 1
-                                """ print("EStoy en el ident ", acumuladorStrings)
-                                print("este es el siguiente caracter ",
-                                    newValorToken[contadorDictTokens], " pos ", contadorDictTokens) """
+                            longitud = len(newValorToken)
+                            if((contadorDictTokens+1) < longitud):
+                                if(newValorToken[contadorDictTokens-len(acumuladorStrings)] == ')' or
+                                   newValorToken[contadorDictTokens-len(acumuladorStrings)] == ']' or
+                                   newValorToken[contadorDictTokens-len(acumuladorStrings)] == '}') and (newValorToken[contadorDictTokens+1] == '(' or
+                                                                                                         newValorToken[contadorDictTokens+1] == '[' or
+                                                                                                         newValorToken[contadorDictTokens+1] == '{'):
+
+                                    appendAnterior = variableER_Enum(
+                                        tipoVar.APPEND, ord('.'))
+                                    appendSiguiente = variableER_Enum(
+                                        tipoVar.APPEND, ord('.'))
+                                    resta = contadorDictTokens - \
+                                        len(acumuladorStrings)+1
+                                    localDict[contadorDictTokens] = appendAnterior
+                                    localDict[resta] = newTipoVarEntero
+                                    localDict[resta+1] = appendSiguiente
+                                    contadorDictTokens += 1
+
+                                else:
+                                    if(newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == '*' or
+                                            newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == ')' or
+                                            newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == ']' or
+                                            newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == '}'):
+                                        newTipoVar = variableER_Enum(
+                                            tipoVar.APPEND, ord('.'))
+                                        resta = contadorDictTokens - \
+                                            len(acumuladorStrings)+1
+                                        localDict[contadorDictTokens] = newTipoVar
+                                        localDict[resta] = newTipoVarEntero
+                                        contadorDictTokens += 1
+                                    elif((newValorToken[contadorDictTokens+1] == '(' or
+                                          newValorToken[contadorDictTokens+1] == '[' or
+                                          newValorToken[contadorDictTokens+1] == '{')):
+                                        newTipoVar = variableER_Enum(
+                                            tipoVar.APPEND, ord('.'))
+                                        localDict[contadorDictTokens +
+                                                  1] = newTipoVar
+                                        contadorDictTokens += 1
+
                             elif(newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == '*' or newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == ')' or newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == ']' or newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == '}'):
                                 newTipoVar = variableER_Enum(
                                     tipoVar.APPEND, ord('.'))
                                 resta = contadorDictTokens - \
                                     len(acumuladorStrings)+1
-                                localDict[resta] = newTipoVar
+                                localDict[contadorDictTokens] = newTipoVar
+                                localDict[resta] = newTipoVarEntero
                                 contadorDictTokens += 1
+
                             # agregamos TODAS las posiciones banneadas
                             acumuladorStrings = ""
                         elif(acumuladorStrings == "EXCEPT"):
-                            print("el contador es : ", contadorDictTokens)
-                            print("YASSS")
+                            print("")
+                            # print("el contador es : ", contadorDictTokens)
+                            # print("YASSS")
 
                 contadorDictTokens += 1
 
