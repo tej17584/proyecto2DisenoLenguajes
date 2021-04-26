@@ -65,12 +65,12 @@ class funciones():
             return True
         return False
 
-    def isOperandV2(self, ch):
+    def isOperandPosftixToken(self, ch):
         """
         REtorna TRUE si el caracter ingresado es un alfanumerico, FALSE de lo contrario
         *@param ch: el caracter a ser probado
         """
-        if ch.isalpha():
+        if ch.isalnum() or ch == "ε" or ch == "#":
             return True
         return False
 
@@ -80,6 +80,15 @@ class funciones():
         *@param a: caracter a ser probado
         """
         if (a == '+' or a == '-') and (a != "'+'" or a != "'-'"):
+            return True
+        return False
+
+    def is_op_PosftixToken(self, a):
+        """
+        Testeamos si el caracter de entrada es un operando
+        *@param a: caracter a ser probado
+        """
+        if a == '+' or a == '.' or a == '*' or a == '?' or a == '|':
             return True
         return False
 
@@ -211,7 +220,7 @@ class funciones():
                         contador = 0
         return nuevaRE
 
-    def alterateREV2(self, RE):
+    def alterateREPosftixToken(self, RE):
         """
         Altera una expresión regular agregándole puntos a la concatenacion para ser mas legible para el postfix
         *@param RE: la expresión regular original
@@ -219,13 +228,13 @@ class funciones():
         nuevaRE = ""
         contador = 0
         for x in range(0, len(RE)):
-            # print("EN EL CICLO S  ", RE[x])
-            # print("EN el ITER ES : ", RE[x+1:x+2])
+            #print("EN EL CICLO S  ", RE[x])
+            #print("EN el ITER ES : ", RE[x+1:x+2])
             nuevaRE += RE[x]
-            if(RE[x] == ")" or RE[x] == "}" or RE[x] == "]" or RE[x] == "*" or RE[x] == "#" or RE[x] == "["):
+            if(self.isOperandPosftixToken(RE[x]) or RE[x] == ")" or RE[x] == "*" or RE[x] == "?" or RE[x] == "+" or RE[x] == "#"):
                 contador += 1
             if(RE[x+1:x+2] != " " and contador == 1):
-                if(self.isOperandV2(RE[x+1:x+2]) or RE[x+1:x+2] == "(" or RE[x+1:x+2] == "{" or RE[x+1:x+2] == "["):
+                if(self.isOperandPosftixToken(RE[x+1:x+2]) or RE[x+1:x+2] == "("):
                     nuevaRE += "."
                     contador = 0
                 else:
@@ -312,28 +321,5 @@ class funciones():
         elif(contadorComilla > 2):
             print("ACA")
             print(value)
-
-        return value
-
-    def getBetweenComillaSandComillaDobleV2(self, value):
-        """
-        VErifica si en un posible valor a sumar lo que hay es comilla doble o comilla simple. Si es simple,
-        retornamos solo eso, si es doble retornamos lo original.
-        El criterio es que si hay dos, es porque esta entre ellos el operando
-        *@param: value: el string a valuar
-        """
-        contadorComilla = 0
-        contadorComillaSimple = 0
-        for x in value:
-            if x == '"':
-                contadorComilla += 1
-            elif x == "'":
-                contadorComillaSimple += 1
-
-        if(contadorComilla >= 2 and contadorComillaSimple < 2):
-            return value
-        elif(contadorComilla < 2 and contadorComillaSimple >= 2):
-            value = value.replace("'", '')
-            return value
 
         return value
