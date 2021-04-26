@@ -1,6 +1,8 @@
 # ! Zona de imports
+from tipoVar import tipoVar, variableER_Enum
 from funciones import funciones
 from pprint import pprint as pp
+from postFixTokens import *
 import difflib
 import re
 """ c2 = '"+"' not in 'digit+"ABCDEF".'
@@ -48,7 +50,7 @@ string = 'a"(H)"b'
 s = "abcacbAUG|GAC|UGAfjdalfd"
 start = string.find('"')
 contador = start+1
-print("Contador al inicio", contador)
+#print("Contador al inicio", contador)
 variableWhile = True
 while variableWhile:
     if(string[contador] == '"'):
@@ -56,19 +58,19 @@ while variableWhile:
     else:
         contador = contador+1
 
-print("contador al final", contador)
+#print("contador al final", contador)
 
 
 setAny = funcioncitas.get_ANYSET()
 
 
 alterada = funcioncitas.alterateRE("a")
-print(alterada)
+# print(alterada)
 
 
 string = 'digit(digit)*".ab"digit(digit)*'
 string2 = 'hexdigit(hexdigit)*hextermEXCEPTKEYWORDS'
-print(string2[26-len("hexterm")-1])
+# print(string2[26-len("hexterm")-1])
 
 
 string1 = "{'J', 'A', 'M', 'C', 'W', 'i', 'b', 'p', 'E', 'r', 'H', 'z', 'T', 'h', 'P', 'a', 'j', 'k', 'v', 'l', 'u', 'f', 'c', 'L', 'Y', 'B', 'V', 'F', 'U', 'Z', 'I', 'Q', 'e', 'K', 't', 's', 'G', 'x', 'o', 'O', 'N', 'D', 'R', 'X', 'q', 'S', 'd', 'm', 'w', 'n', 'y', 'g'}"
@@ -78,6 +80,27 @@ string = 'comillas(stringletter(stringletter)*)comillas'
 string4 = '((sign)|e)digit(digit)*'
 string5 = 'hexdigit(hexdigit)*hextermEXCEPTKEYWORDS'
 string6 = 'digit(digit)*'
-print(len("digit"))
-print(string5[26-len("hexterm")-1])
-print(string6[-1])
+
+LParentesis1 = variableER_Enum(tipoVar.LPARENTESIS, ord("("))
+Ident1 = variableER_Enum(tipoVar.IDENT, ord("a"))
+APPEND1 = variableER_Enum(tipoVar.APPEND, ord("."))
+LParentesis2 = variableER_Enum(tipoVar.LPARENTESIS, ord("("))
+IDent2 = variableER_Enum(tipoVar.IDENT, ord("b"))
+Rparetensis1 = variableER_Enum(tipoVar.RPARENTESIS, ord(")"))
+Kleene1 = variableER_Enum(tipoVar.KLEENE, ord("*"))
+APPEND2 = variableER_Enum(tipoVar.APPEND, ord("."))
+ACEPTACION1 = variableER_Enum(tipoVar.ACEPTACION, ord("#"))
+Rparetensis2 = variableER_Enum(tipoVar.RPARENTESIS, ord(")"))
+diccionarioValores = {0: LParentesis1, 1: Ident1, 2: APPEND1,
+                      3: LParentesis2, 4: IDent2, 5: Rparetensis1,
+                      6: Kleene1, 7: APPEND2, 8: ACEPTACION1,
+                      9: Rparetensis2}
+
+
+clasePosftix = ConversionPostfix()
+posftix = clasePosftix.infixToPostfix(diccionarioValores)
+for x in posftix:
+    print(f'EL valor del token es: ', x.getIdenficador())
+
+
+#print("el valor es ", Ident1.getIdenficador())
