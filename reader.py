@@ -22,7 +22,7 @@ class Reader:
     """
 
     def __init__(self) -> None:
-        self.rutaFile = "ATGFilesExamples\DoubleP.ATG"
+        self.rutaFile = "ATGFilesExamples\HexNumberP.ATG"
         self.streamCompleto = ""
         self.dictArchivoEntrada = ""
         self.lineasArchivo = []
@@ -35,6 +35,8 @@ class Reader:
         self.isChar = False
         self.isToken = False
         self.isKeyword = False
+        self.isEXCET = False
+        self.acumuladorExcept = ""  # el acumulador para saber que hay que exceptuar
         self.boolComillasPunto = False
         self.bannedPositionsString = []  # estas son las posiciones banneadas de stirngs
         self.readDocumentAndPoblateStream()
@@ -420,10 +422,11 @@ class Reader:
                 newValorTokenAskVerification)
             newValorToken = newValorToken.replace(" ", "")
             # acá empieza la logica de sustiticion
-            print("VAlor por el token ", newValorToken)
+            #print("VAlor por el token ", newValorToken)
             localDict = {}
             contadorDictTokens = 0
             acumuladorStrings = ""
+            acumuladorExcept = ""
             for x in newValorToken:
                 if(x == '(' and (contadorDictTokens not in self.bannedPositionsString)):
                     newTipoVar = variableER_Enum(tipoVar.LPARENTESIS, ord(x))
@@ -451,7 +454,7 @@ class Reader:
                             contador = start+1
                             # agregamos esta posicion como ya no usable
                             posicionInicialString = contador
-                            print("Contador al inicio", posicionInicialString)
+                            #print("Contador al inicio", posicionInicialString)
                             variableWhile = True
                             while variableWhile:
                                 if(newValorToken[contador] == '"'):
@@ -460,7 +463,7 @@ class Reader:
                                     contador = contador+1
                             # agregamos esta posicion como ya no usable
                             posicionFinalString = contador
-                            print("contador al final", posicionFinalString)
+                            #print("contador al final", posicionFinalString)
                             # agregamos TODAS las posiciones banneadas
                             for x in range(posicionInicialString, posicionFinalString+1):
                                 self.bannedPositionsString.append(x)
@@ -592,9 +595,17 @@ class Reader:
                             # agregamos TODAS las posiciones banneadas
                             acumuladorStrings = ""
                         elif(acumuladorStrings == "EXCEPT"):
-                            print("")
-                            # print("el contador es : ", contadorDictTokens)
-                            # print("YASSS")
+                            # colocamos la variable global en true
+                            self.isEXCET = True
+                        elif(self.isEXCET):
+                            self.acumuladorExcept += x
+                            if(self.acumuladorExcept == "KEYWORDS"):
+                                self.acumuladorExcept = ""
+                                self.isEXCET = False
+                                newTipoVar = variableER_Enum(
+                                    tipoVar.EXCEPT, self.jsonFinal["KEYWORDS"])
+                                newTipoVar.setNombreIdentificador("KEYWORDS")
+                                localDict[contadorDictTokens] = newTipoVar
 
                 contadorDictTokens += 1
 
@@ -602,7 +613,7 @@ class Reader:
             contadorDictTokens = 0
             self.bannedPositionsString = []
 
-        print(self.jsonFinal["CHARACTERS"])
+        print(self.jsonFinal["KEYWORDS"])
         for llave, valor in self.jsonFinal["TOKENS"].items():
             print("LLAVE: ", llave)
             for numeroItem, valorItem in valor.items():
