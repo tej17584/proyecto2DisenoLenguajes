@@ -7,6 +7,7 @@ Propósito: ESte programa tiene funciones útiles
 V 1.0
 """
 import json
+from tipoVar import *
 
 
 class funciones():
@@ -74,6 +75,15 @@ class funciones():
             return True
         return False
 
+    def isOperandPosftixTokenFinal(self, ch):
+        """
+        REtorna TRUE si el caracter ingresado es un alfanumerico, FALSE de lo contrario
+        *@param ch: el caracter a ser probado
+        """
+        if ch.getIdenficador() == "IDENT" or ch.getIdenficador() == "EPSILON" or ch.getIdenficador() == "STRING" or ch.getIdenficador() == "ACEPTACION":
+            return True
+        return False
+
     def is_op(self, a):
         """
         Testeamos si el caracter de entrada es un operando
@@ -89,6 +99,15 @@ class funciones():
         *@param a: caracter a ser probado
         """
         if a == '+' or a == '.' or a == '*' or a == '?' or a == '|':
+            return True
+        return False
+
+    def is_op_PosftixTokenFinal(self, a):
+        """
+        Testeamos si el caracter de entrada es un operando
+        *@param a: caracter a ser probado
+        """
+        if a.getIdenficador() == 'APPEND' or a.getIdenficador() == 'KLEENE' or a.getIdenficador() == 'OR':
             return True
         return False
 
