@@ -644,9 +644,11 @@ class Reader:
         print(self.jsonFinal["KEYWORDS"])
         for llave, valor in self.jsonFinal["TOKENS"].items():
             print("LLAVE: ", llave)
-            for numeroItem, valorItem in valor.items():
-                print(
-                    f'Identificador: {valorItem.getIdenficador()} value: {valorItem.getValueIdentificador()}')
+            print(self.jsonFinal["TOKENS"][llave])
+            #for numeroItem, valorItem in valor.items():
+                # print(
+                # f'Identificador: {valorItem.getIdenficador()} value: {valorItem.getValueIdentificador()}')
+                #print(valorItem)
 
         """ for x, y in self.jsonFinal.items():
             for valor, pedazito in y.items():

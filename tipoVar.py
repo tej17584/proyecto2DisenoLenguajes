@@ -29,7 +29,7 @@ class tipoVar(Enum):
     KLEENE = '*'
     OR = '|'
     LPARENTESIS = '('
-    RPARENTESIS = 8
+    RPARENTESIS = ')'
     EXCEPT = 9
     KEYWORDS = 10
     EPSILON = 15
