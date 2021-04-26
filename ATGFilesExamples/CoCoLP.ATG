@@ -18,7 +18,7 @@ MyANY = ANY-operadores.
 TOKENS
 
 ident = letter{letter|digit} EXCEPT KEYWORDS.
-string = comillas stringletter{stringletter} comillas.
+string = comillas (stringletter{stringletter}) comillas.
 
 char = "'"["/"]letter"'".
 charnumber = "CHR("digit{digit}")".
