@@ -558,24 +558,26 @@ class Reader:
                                     contadorDictTokens += 1
 
                                 else:
-                                    if(newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == '*' or
+                                    if((newValorToken[contadorDictTokens+1] == '(' or
+                                        newValorToken[contadorDictTokens+1] == '[' or
+                                            newValorToken[contadorDictTokens+1] == '{')):
+                                        newTipoVar = variableER_Enum(
+                                            tipoVar.APPEND, ord('.'))
+                                        localDict[contadorDictTokens +
+                                                  1] = newTipoVar
+                                        contadorDictTokens += 1
+                                    elif(newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == '*' or
                                             newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == ')' or
                                             newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == ']' or
                                             newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == '}'):
+                                        indexdePalabra = newValorToken.find(
+                                            acumuladorStrings)
                                         newTipoVar = variableER_Enum(
                                             tipoVar.APPEND, ord('.'))
                                         resta = contadorDictTokens - \
                                             len(acumuladorStrings)+1
                                         localDict[contadorDictTokens] = newTipoVar
                                         localDict[resta] = newTipoVarEntero
-                                        contadorDictTokens += 1
-                                    elif((newValorToken[contadorDictTokens+1] == '(' or
-                                          newValorToken[contadorDictTokens+1] == '[' or
-                                          newValorToken[contadorDictTokens+1] == '{')):
-                                        newTipoVar = variableER_Enum(
-                                            tipoVar.APPEND, ord('.'))
-                                        localDict[contadorDictTokens +
-                                                  1] = newTipoVar
                                         contadorDictTokens += 1
 
                             elif(newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == '*' or newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == ')' or newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == ']' or newValorToken[contadorDictTokens-len(acumuladorStrings)-1] == '}'):
