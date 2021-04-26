@@ -8,8 +8,9 @@ V 1.0
 """
 
 #! Zona de imports
-from collections import OrderedDict
 from funciones import *
+from tipoVar import *
+from pprint import pprint as pp
 
 
 class ConversionPostfix:
@@ -21,8 +22,8 @@ class ConversionPostfix:
         self.arrayOperandos = []
         # seteamos la precedencia. La suma y resta es 1, la multiplicacion y division son 2 y la exponenciacion es 3, siguiendo reglas de la aritmética
         self.outputPostfix = []
-        self.precedenceV2 = {'|': 1, '.': 2,
-                             '*': 3, '?': 3, "+": 3}  # diccionario de precedencia version 2
+        self.precedenceV2 = {'OR': 1, 'APPEND': 2,
+                             'KLEENE': 3, '?': 3, "+": 3}  # diccionario de precedencia version 2
         self.concatenado = ''
         self.validacion = False
         self.funciones = funciones()
@@ -46,8 +47,9 @@ class ConversionPostfix:
     # Se verifica si la precedencia de un operandor es estrictamente menor que la del primer elemento del stack
     def mayorPrecedencia(self, i):
         try:
-            a = self.precedenceV2[i]
-            b = self.precedenceV2[self.peekTopOfStack()]
+            a = self.precedenceV2[i.getIdenficador()]
+            bnuevo = self.peekTopOfStack()
+            b = self.precedenceV2[bnuevo.getIdenficador()]
             return True if a <= b else False
         except KeyError:
             return False
@@ -60,33 +62,35 @@ class ConversionPostfix:
     # ? Método principal para convertir
     def infixToPostfix(self, exp):
         # Iteramos sobre la exppresión
-        for i in exp:
+        for llave, i in exp.items():
+            # for i in exp:
             # Si el caracter es un operando se añade al print final
-            if self.funciones.isOperandPosftixToken(i):
+            if self.funciones.isOperandPosftixTokenFinal(i):
                 #s = self.numberToLetter(i)
-                if(i != "ε"):
+                """ if(i != "ε"):
                     s = i.lower()
                 else:
-                    s = i
-                self.outputPostfix.append(s)
-            elif self.funciones.is_op_PosftixToken(i):
-                while len(self.arrayOperandos) > 0 and self.arrayOperandos[-1] != '(' and self.mayorPrecedencia(i):
+                    s = i """
+                self.outputPostfix.append(i)
+            elif self.funciones.is_op_PosftixTokenFinal(i):
+                while len(self.arrayOperandos) > 0 and self.arrayOperandos[-1].getIdenficador() != 'LPARENTESIS' and self.mayorPrecedencia(i):
                     top = self.pop()
                     self.outputPostfix.append(top)
                 self.push(i)
-            elif i == '(':  # Si tenemos un paréntesis abierto, se agrega al STACK
+            elif i.getIdenficador() == 'LPARENTESIS':  # Si tenemos un paréntesis abierto, se agrega al STACK
                 self.push(i)
             # Si el caracter entrante es el cierre de paréntesis, hacemos pop y lo mandamos a outputPostfix hasta que encontremos otra abertura de paréntesis
-            elif i == ')':
+            elif i.getIdenficador() == 'RPARENTESIS':
                 # mientras no sea vacío y sea distinto a "("
-                while((not self.isEmpty()) and self.peekTopOfStack() != '('):
+                while((not self.isEmpty()) and self.peekTopOfStack().getIdenficador() != 'LPARENTESIS'):
+                    a = ""
                     a = self.pop()  # hacemos pop
                     self.outputPostfix.append(a)  # agregamos al outputPostfix
-                    if len(a) == 0:
+                    if (a == ""):
                         print("No hay signo de cerrado de paréntesis")
                         return -1
                 # si llegamos a la condicion del while, entonces retornamos -1 para salir
-                if (not self.isEmpty() and self.peekTopOfStack() != '('):
+                if (not self.isEmpty() and self.peekTopOfStack().getIdenficador() != 'LPARENTESIS'):
                     return -1
                 else:
                     self.pop()  # de lo contrario, hacemos pop de valores
@@ -97,22 +101,22 @@ class ConversionPostfix:
          # verificamos si existe un paréntesis abierto de más
         while len(self.arrayOperandos):
             caracter = self.pop()
-            if caracter == "(":
+            if caracter.getIdenficador() == "LPARENTESIS":
                 return "ERRORPOSTFIX"
             self.outputPostfix.append(caracter)
 
         # Imprimimos
         #print(" ".join(self.outputPostfix))
-        return " ".join(self.outputPostfix)
+        return self.outputPostfix
 
 
-funcioncitas = funciones()
+""" funcioncitas = funciones()
 expresion = input('Ingresa una expresión:  ')
 expresion = expresion.replace(' ', '')
 obj = ConversionPostfix()
 expresionAlterada = funcioncitas.alterateREPosftixToken(expresion)
 postFixValue = obj.infixToPostfix(expresionAlterada)
-print(f'El resultado es: {postFixValue}')
+print(f'El resultado es: {postFixValue}') """
 #strconv = postFixValue.split(' ')
 #resultado = obj.operatePostFix(strconv)
 #print("tipo de resultado ", type(resultado))
