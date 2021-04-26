@@ -611,6 +611,7 @@ class Reader:
 
                 contadorDictTokens += 1
 
+            contadorDictTokens += 1
             newTipoVar = variableER_Enum(
                 tipoVar.APPEND, ord("."))
             localDict[contadorDictTokens] = newTipoVar
@@ -631,10 +632,11 @@ class Reader:
             newTipoVar = variableER_Enum(
                 tipoVar.LPARENTESIS, ord("("))
             localDictEncerrado[contadorEncerrado] = newTipoVar
-            contadorEncerrado += 1
+            contadorEncerrado += 2
             for llave, valor in localDict.items():
                 localDictEncerrado[contadorEncerrado] = valor
                 contadorEncerrado += 1
+
             self.jsonFinal["TOKENS"][llaveToken] = localDictEncerrado
             contadorDictTokens = 0
             self.bannedPositionsString = []
