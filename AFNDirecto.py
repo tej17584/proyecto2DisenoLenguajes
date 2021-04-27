@@ -29,6 +29,7 @@ class AFNDIRECTO:
         self.DestadosV2 = []
         self.lenguaje = lenguaje
         self.AFDConstruidoFinal = []
+        self.nodosAceptacion = {}
         # variables para el AFN
         self.AFDGraph = Digraph('finite_state_machine',
                                 comment="Diagrama AFN", format="png")
@@ -246,6 +247,19 @@ class AFNDIRECTO:
                 if(str(x) in valor[1]):
                     arrayValores.append(valor[0])
 
+        arrayValores = list(
+            dict.fromkeys(arrayValores))
+        return arrayValores
+
+    def getFinalStateAFNV2(self):
+        arrayValores = []
+        estadosFinales = self.getFinalStateNumber()
+        for valor in self.AFDConstruidoFinal:
+            for x in estadosFinales:
+                if(str(x) in valor[1]):
+                    if(valor[1] not in arrayValores):
+                        arrayValores.append(valor[1])
+
         return arrayValores
 
     def getStateNumberForArray(self, array):
@@ -266,8 +280,8 @@ class AFNDIRECTO:
                 estado1 = self.getStateNumberForArray(x[1])
                 esatdo2 = self.getStateNumberForArray(x[3])
                 self.AFDGraph.edge(str(estado1), str(
-                    #esatdo2), self.funciones.fromSetNumbersToSTring(x[2]))
-                    esatdo2), (x[2]))
+                    esatdo2), self.funciones.fromSetNumbersToSTring(x[2]))
+                # esatdo2), (x[2]))
         self.AFDGraph.render('Automatas/AFDDirecto', view=True)
 
     def mover(self, estado, caracter):
@@ -278,7 +292,23 @@ class AFNDIRECTO:
         arrayMover = []
         for estados in estado:
             for x in arrayEvaluar:
-                if(x[2] == caracter.getIdenficador() and len(x[3]) > 0 and estados == x[0]):
+                if(x[2] == caracter and len(x[3]) > 0 and estados == x[0]):
+                    estadoSiguiente = self.getStateNumberForArray(x[3])
+                    if(estadoSiguiente not in arrayMover):
+                        arrayMover.append(estadoSiguiente)
+
+        return arrayMover
+
+    def moverV2(self, estado, caracter):
+        """
+        Esta funcion retorna el siguiente estado
+        """
+        arrayEvaluar = self.AFDConstruidoFinal
+        arrayMover = []
+        for estados in estado:
+            for x in arrayEvaluar:
+                variableIn = (ord(caracter)) in x[2]
+                if(variableIn and len(x[3]) > 0 and estados == x[0]):
                     estadoSiguiente = self.getStateNumberForArray(x[3])
                     if(estadoSiguiente not in arrayMover):
                         arrayMover.append(estadoSiguiente)
@@ -289,10 +319,13 @@ class AFNDIRECTO:
         start_time = time.perf_counter()
         s = [0]
         for x in self.cadenaEvaluarAFD:
-            s = self.mover(s, x)
+            s = self.moverV2(s, x)
         end_time = time.perf_counter()
         idfinal = self.getFinalStateAFN()
-
+        idEstadosFinalesAceptacion = self.getFinalStateAFNV2()
+        print("EStado donde no se pudo mover", s)
+        print("Id final", idfinal)
+        print("Acá debería haber uno de aceptacion", idEstadosFinalesAceptacion)
         if(len(s) > 0):
             if(s[0] in idfinal):
                 print("------------------SIMULACION AFD DIRECTO-------------------")
@@ -346,6 +379,9 @@ class AFNDIRECTO:
                     nodo.setCaracterNodo(postfixValue.getNombreIdentificador())
                     nodo.setNodoId(str(self.contadorGlobal))
                     self.diccionarioSiguientePos[self.contadorGlobal] = []
+                    if(postfixValue.getIdenficador() == "ACEPTACION"):
+                        self.nodosAceptacion[self.contadorGlobal] = postfixValue.getNombreIdentificador(
+                        )
                     self.contadorGlobal += 1  # aumentamos el contador global
                     nodoPrimerapos = [nodo]
                     nodoUltimaPos = [nodo]
@@ -459,13 +495,13 @@ class AFNDIRECTO:
                         self.Destados.append(siguientePosID)
                         self.DestadosV2.append(siguientePosID)
                         self.AFDConstruidoFinal.append(
-                            [contador, estadoInterno, letra.getNombreIdentificador(), siguientePosID])
+                            [contador, estadoInterno, letra.getValueIdentificador(), siguientePosID])
 
                     elif(len(estadoInterno) > 0):
                         self.AFDConstruidoFinal.append(
-                            [contador, estadoInterno, letra.getNombreIdentificador(), siguientePosID])
+                            [contador, estadoInterno, letra.getValueIdentificador(), siguientePosID])
 
         print(self.AFDConstruidoFinal)
         self.graficarAFD()
 
-        # self.simularAFD()
+        self.simularAFD()
