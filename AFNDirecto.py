@@ -10,6 +10,7 @@ Propósito: Este programa calcula un AFN de forma directa
 from os import terminal_size
 from funciones import *
 from nodoDirecto import *
+from graphviz import Digraph
 import time
 
 
