@@ -62,8 +62,8 @@ class ConversionPostfixTokens:
     # ? Método principal para convertir
     def infixToPostfix(self, exp):
         # Iteramos sobre la exppresión
-        for llave, i in exp.items():
-            # for i in exp:
+        # for llave, i in exp.items():
+        for i in exp:
             # Si el caracter es un operando se añade al print final
             if self.funciones.isOperandPosftixTokenFinal(i):
                 #s = self.numberToLetter(i)
