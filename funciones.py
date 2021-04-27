@@ -26,6 +26,17 @@ class funciones():
         """
         return self.ANYSET
 
+    def getLastTokenValueFromDict(self, dictionary):
+        """
+        Retorna el valor de la ultima llave de un diccionario
+        """
+        arrayInterno = []
+        nombreToken = ""
+        for llave, valor in dictionary.items():
+            arrayInterno.append(llave)
+
+        return arrayInterno[-1]
+
     def printPrettyDictionary(self, d, indent=0):
         """
         this function prints pretty the dictionary,
