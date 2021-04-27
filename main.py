@@ -21,6 +21,7 @@ import os
 # creamos las instancias de clases
 instancia_reader = Reader()
 instancia_funciones = funciones()
+arrayEntradaP1 = []
 
 
 def menu():
@@ -45,13 +46,21 @@ while True:
         palabra = ""
         # primero obtenemos los tokens finales
         tokensFinales = instancia_reader.getTokensFinales()
+        llaveFinal = instancia_funciones.getLastTokenValueFromDict(
+            tokensFinales)
+        arrayValores = []
         for llave, valueforPostfix in tokensFinales.items():
-            instancia_posftixTokens = ConversionPostfixTokens()
-            posftix = instancia_posftixTokens.infixToPostfix(valueforPostfix)
-            pp(f'El postix de {llave} es')
-            for x in posftix:
-                pp(f' {x.getIdenficador()}  {x.getNombreIdentificador()}')
-
+            for numero, valornumero in valueforPostfix.items():
+                arrayValores.append(valornumero)
+            if(llaveFinal != llave):
+                orEntreExpresiones = variableER_Enum(tipoVar.OR, ord("|"))
+                arrayValores.append(orEntreExpresiones)
+         # creamos una instancia nueva del posftix
+        instancia_posftixTokens = ConversionPostfixTokens()
+        posftix = instancia_posftixTokens.infixToPostfix(
+            arrayValores)  # colocamos el valor del postfix
+        for x in posftix:
+            pp(f' {x.getIdenficador()}  {x.getNombreIdentificador()}')
         input("Presiona ENTER para regresar al menú")
         """  # Probamos la funcionalidad
         expresion = input('Ingresa una expresión regular:  ')
