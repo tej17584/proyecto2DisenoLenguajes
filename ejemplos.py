@@ -98,9 +98,17 @@ diccionarioValores = {0: LParentesis1, 1: Ident1, 2: APPEND1,
 
 
 clasePosftix = ConversionPostfixTokens()
-posftix = clasePosftix.infixToPostfix(diccionarioValores)
-for x in posftix:
-    print(f'EL valor del token es: ', x.getIdenficador())
+arrayValor = []
+for llave, valor in diccionarioValores.items():
+    arrayValor.append(valor)
+posftix = clasePosftix.infixToPostfix(arrayValor)
+# for x in posftix:
+#    print(f'EL valor del token es: ', x.getIdenficador())
 
+lenguaje = funcioncitas.getLanguage(posftix)
+for x in lenguaje:
+    print(x.getIdenficador())
+print(f'El lenguaje es {lenguaje}')
 
 #print("el valor es ", Ident1.getIdenficador())
+print(chr(34))
