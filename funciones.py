@@ -121,6 +121,21 @@ class funciones():
             return True
         return False
 
+    def getLanguage(self, RE):
+        """
+        DAda una expresion regular, esto extrae el lenguaje, osea los caracteres unicos
+        """
+        #lenguaje = ''.join(set(str(RE)))
+        lenguaje = RE
+        newLenguaje = []
+        arrayLocal = []
+        for x in lenguaje:
+            if(x.getIdenficador() == "IDENT" or x.getIdenficador() == "EPSILON" or x.getIdenficador() == "STRING"):
+                if(x.getNombreIdentificador() not in arrayLocal):
+                    arrayLocal.append(x.getNombreIdentificador())
+                    newLenguaje.append(x)
+        return newLenguaje
+
     def alterateAskChain(self, exp):
         """
         ESta funcion altera una cadena o expresion regular, y si encuentra un simbolo de + entonces lo sustitye por el equivalente
@@ -211,6 +226,20 @@ class funciones():
         nuevoString = ""
         for x in setToTransform:
             nuevoString += x
+
+        return nuevoString
+
+    def fromSetNumbersToSTring(self, setToTransform):
+        """
+        Esta funcion convierte un set a un string concatenado
+        *@param setToTransform: el set a convertir
+        """
+        if(isinstance(setToTransform, int)):
+            return str(setToTransform)
+        else:
+            nuevoString = ""
+            for x in setToTransform:
+                nuevoString += chr(x)
 
         return nuevoString
 
