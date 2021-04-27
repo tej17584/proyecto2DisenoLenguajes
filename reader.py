@@ -515,8 +515,10 @@ class Reader:
                                         self.boolComillasPunto = False
                                     else:
                                         variableNueva = ""
+                                        setNuevo = set()
+                                        setNuevo.add(ord(w))
                                         variableNueva = variableER_Enum(
-                                            tipoVar.STRING, ord(w))
+                                            tipoVar.STRING, setNuevo)
                                         localDict[contadorInter] = variableNueva
                                     """ self.bannedPositionsString.append(
                                         contadorInter) """
@@ -531,8 +533,10 @@ class Reader:
                                         self.boolComillasPunto = False
                                     else:
                                         variableNueva = ""
+                                        setNuevo = set()
+                                        setNuevo.add(ord(w))
                                         variableNueva = variableER_Enum(
-                                            tipoVar.STRING, ord(w))
+                                            tipoVar.STRING, setNuevo)
                                         localDict[contadorInter] = variableNueva
                                     """ self.bannedPositionsString.append(
                                         contadorInter) """
