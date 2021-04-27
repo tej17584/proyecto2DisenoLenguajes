@@ -14,6 +14,7 @@ from posftixEvaluador import *
 from tipoVar import *
 from postFixTokens import *
 from reader import *
+from AFNDirecto import *
 import re
 import os
 
@@ -59,8 +60,13 @@ while True:
         instancia_posftixTokens = ConversionPostfixTokens()
         posftix = instancia_posftixTokens.infixToPostfix(
             arrayValores)  # colocamos el valor del postfix
-        for x in posftix:
-            pp(f' {x.getIdenficador()}  {x.getNombreIdentificador()}')
+        # obtenemos el lenguaje
+        lenguaje = instancia_funciones.getLanguage(posftix)
+        # instanciamos el AFD directo
+        objDirecto = AFNDIRECTO(posftix, lenguaje, palabra)
+        objDirecto.generateAFNDIRECTO()
+        # for x in posftix:
+        #pp(f' {x.getIdenficador()}  {x.getNombreIdentificador()}')
         input("Presiona ENTER para regresar al menú")
         """  # Probamos la funcionalidad
         expresion = input('Ingresa una expresión regular:  ')
