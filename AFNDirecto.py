@@ -11,6 +11,7 @@ from os import terminal_size
 from funciones import *
 from nodoDirecto import *
 from graphviz import Digraph
+from pprint import pprint as pp
 import time
 
 
@@ -37,26 +38,26 @@ class AFNDIRECTO:
         self.cadenaEvaluarAFD = cadena
 
     def isAnulable(self, Nodos, caracter):
-        if(caracter == "ε"):
+        if(caracter.getIdenficador() == "EPSILON"):
             return True
         else:
-            if(self.funciones.isOperand(caracter)):
+            if(self.funciones.isOperandPosftixTokenFinal(caracter)):
                 return False
-            elif (caracter == "|"):
+            elif (caracter.getIdenficador() == "OR"):
                 nodoC1 = Nodos.pop()
                 nodoC2 = Nodos.pop()
                 anulableC1 = nodoC1.getAnulable()
                 anulableC2 = nodoC2.getAnulable()
 
                 return (anulableC1 or anulableC2)
-            elif(caracter == "."):
+            elif(caracter.getIdenficador() == "APPEND"):
                 nodoC1 = Nodos.pop()
                 nodoC2 = Nodos.pop()
                 anulableC1 = nodoC1.getAnulable()
                 anulableC2 = nodoC2.getAnulable()
 
                 return (anulableC1 and anulableC2)
-            elif(caracter == "*"):
+            elif(caracter.getIdenficador() == "KLEENE"):
                 nodoC1 = Nodos.pop()
                 anulableC1 = nodoC1.getAnulable()
 
@@ -65,15 +66,15 @@ class AFNDIRECTO:
         return "FALSO"
 
     def primeraPos(self, Nodos, caracter):
-        if(caracter == "ε"):
+        if(caracter.getIdenficador() == "EPSILON"):
             return ""
         else:
             # si es un caracter, retornamos el mismo id, esa es su primera pos
-            if(self.funciones.isOperand(caracter)):
+            if(self.funciones.isOperandPosftixTokenFinal(caracter)):
                 nodoC1 = Nodos.pop()
                 nodoC1Id = nodoC1.getNodoId()
                 return [nodoC1Id]
-            elif (caracter == "|"):
+            elif (caracter.getIdenficador() == "OR"):
                 nodoC1 = Nodos.pop()
                 nodoC2 = Nodos.pop()
                 primeraPosC1 = nodoC1.getPrimeraPos()
@@ -89,7 +90,7 @@ class AFNDIRECTO:
                 arrayFinalOr.sort()
 
                 return arrayFinalOr
-            elif(caracter == "."):
+            elif(caracter.getIdenficador() == "APPEND"):
                 nodoC1 = Nodos.pop()
                 nodoC2 = Nodos.pop()
                 anulableC1 = nodoC1.getAnulable()
@@ -109,7 +110,7 @@ class AFNDIRECTO:
                 arrayFinalAND.sort()
 
                 return arrayFinalAND
-            elif(caracter == "*"):
+            elif(caracter.getIdenficador() == "KLEENE"):
                 nodoC1 = Nodos.pop()
                 primeraPosC1 = nodoC1.getPrimeraPos()
                 if(primeraPosC1 == ""):
@@ -123,15 +124,15 @@ class AFNDIRECTO:
         return "FALSO"
 
     def ultimaPos(self, Nodos, caracter):
-        if(caracter == "ε"):
+        if(caracter.getIdenficador() == "EPSILON"):
             return ""
         else:
             # si es un caracter, retornamos el mismo id, esa es su primera pos
-            if(self.funciones.isOperand(caracter)):
+            if(self.funciones.isOperandPosftixTokenFinal(caracter)):
                 nodoC1 = Nodos.pop()
                 nodoC1Id = nodoC1.getNodoId()
                 return [nodoC1Id]
-            elif (caracter == "|"):
+            elif (caracter.getIdenficador() == "OR"):
                 nodoC1 = Nodos.pop()
                 nodoC2 = Nodos.pop()
                 ultimaPosC1 = nodoC1.getUltimaPos()
@@ -147,7 +148,7 @@ class AFNDIRECTO:
                 arrayFinalOr.sort()
 
                 return arrayFinalOr
-            elif(caracter == "."):
+            elif(caracter.getIdenficador() == "APPEND"):
                 nodoC1 = Nodos.pop()
                 nodoC2 = Nodos.pop()
                 anulableC2 = nodoC2.getAnulable()
@@ -168,7 +169,7 @@ class AFNDIRECTO:
                 arrayFinalAND.sort()
 
                 return arrayFinalAND
-            elif(caracter == "*"):
+            elif(caracter.getIdenficador() == "KLEENE"):
                 nodoC1 = Nodos.pop()
                 ultimaPosC1 = nodoC1.getUltimaPos()
                 if(ultimaPosC1 == ""):
@@ -183,7 +184,7 @@ class AFNDIRECTO:
 
     def siguientePos(self, Nodos, caracter):
         # si es un caracter, retornamos el mismo id, esa es su primera pos
-        if(caracter == "."):
+        if(caracter.getIdenficador() == "APPEND"):
             nodoC1 = Nodos.pop()
             nodoC2 = Nodos.pop()
 
@@ -201,7 +202,7 @@ class AFNDIRECTO:
                     dict.fromkeys(arrayTemporal))
                 arrayTemporal.sort()
                 self.diccionarioSiguientePos[int(x)] = arrayTemporal
-        if(caracter == "*"):
+        if(caracter.getIdenficador() == "KLEENE"):
             nodoC1 = Nodos.pop()
             ultimaPosC1 = nodoC1.getUltimaPos()
             primeraPosC1 = nodoC1.getPrimeraPos()
@@ -224,23 +225,26 @@ class AFNDIRECTO:
         """
         array = []
         for numero, nodo in self.AFDDirectoFinal.items():
-            if(nodo.getCaracterNodo() == caracter):
+            if(nodo.getCaracterNodo() == caracter.getNombreIdentificador()):
                 array.append(nodo.getNodoId())
 
         return array
 
     def getFinalStateNumber(self):
+        array = []
         for numero, valor in self.diccionarioSiguientePos.items():
             if len(valor) == 0:
-                return numero
+                array.append(numero)
 
-        return ""
+        return array
 
     def getFinalStateAFN(self):
         arrayValores = []
+        estadosFinales = self.getFinalStateNumber()
         for valor in self.AFDConstruidoFinal:
-            if(str(self.getFinalStateNumber()) in valor[1]):
-                arrayValores.append(valor[0])
+            for x in estadosFinales:
+                if(str(x) in valor[1]):
+                    arrayValores.append(valor[0])
 
         return arrayValores
 
@@ -261,7 +265,9 @@ class AFNDIRECTO:
             if(len(x[1]) > 0 and len(x[3]) > 0):
                 estado1 = self.getStateNumberForArray(x[1])
                 esatdo2 = self.getStateNumberForArray(x[3])
-                self.AFDGraph.edge(str(estado1), str(esatdo2), x[2])
+                self.AFDGraph.edge(str(estado1), str(
+                    #esatdo2), self.funciones.fromSetNumbersToSTring(x[2]))
+                    esatdo2), (x[2]))
         self.AFDGraph.render('Automatas/AFDDirecto', view=True)
 
     def mover(self, estado, caracter):
@@ -272,7 +278,7 @@ class AFNDIRECTO:
         arrayMover = []
         for estados in estado:
             for x in arrayEvaluar:
-                if(x[2] == caracter and len(x[3]) > 0 and estados == x[0]):
+                if(x[2] == caracter.getIdenficador() and len(x[3]) > 0 and estados == x[0]):
                     estadoSiguiente = self.getStateNumberForArray(x[3])
                     if(estadoSiguiente not in arrayMover):
                         arrayMover.append(estadoSiguiente)
@@ -315,12 +321,12 @@ class AFNDIRECTO:
     def generateAFNDIRECTO(self):
         # acá se construye el arbol
         for postfixValue in self.expresionPostfix:
-            if(self.funciones.isOperand(postfixValue)):  # * si es una letra
-                if(postfixValue == "ε"):  # si es una e no lleva numeración
+            if(self.funciones.isOperandPosftixTokenFinal(postfixValue)):  # * si es una letra
+                if(postfixValue.getIdenficador() == "EPSILON"):  # si es una e no lleva numeración
                     nodoPrimerapos = ""
                     nodoUltimaPos = ""
                     nodo = NodoDirecto()
-                    nodo.setCaracterNodo(postfixValue)
+                    nodo.setCaracterNodo(postfixValue.getIdenficador())
                     nodo.setNodoId("")
 
                     nodo.setAnulable(self.isAnulable(nodo, postfixValue))
@@ -337,7 +343,7 @@ class AFNDIRECTO:
                     nodo = NodoDirecto()
                     nodoPrimerapos = ""
                     nodoUltimaPos = ""
-                    nodo.setCaracterNodo(postfixValue)
+                    nodo.setCaracterNodo(postfixValue.getNombreIdentificador())
                     nodo.setNodoId(str(self.contadorGlobal))
                     self.diccionarioSiguientePos[self.contadorGlobal] = []
                     self.contadorGlobal += 1  # aumentamos el contador global
@@ -352,12 +358,12 @@ class AFNDIRECTO:
 
                     self.contadorGlobalV2 += 1
                     self.arrayNodos.append(nodo)  # agregamos el nodo
-            elif(postfixValue == "|"):  # el OR NO se le coloca numero
+            elif(postfixValue.getIdenficador() == "OR"):  # el OR NO se le coloca numero
                 nodoOrAnulable = ""
                 nodoOrPrimeraPos = ""
                 nodoOrUltimaPos = ""
                 nodoOr = NodoDirecto()
-                nodoOr.setCaracterNodo(postfixValue)
+                nodoOr.setCaracterNodo(postfixValue.getIdenficador())
                 nodoOr.setNodoId("")
                 nodob = self.arrayNodos.pop()
                 nodoa = self.arrayNodos.pop()
@@ -375,13 +381,13 @@ class AFNDIRECTO:
                 self.contadorGlobalV2 += 1
                 self.arrayNodos.append(nodoOr)  # agregamos el nodo
 
-            elif(postfixValue == "."):  # el AND NO se le coloca numero
+            elif(postfixValue.getIdenficador() == "APPEND"):  # el AND NO se le coloca numero
                 nodoAndAnulable = ""
                 nodoAndPrimeraPos = ""
                 nodoAndUltimaPos = ""
                 nodoAndSiguientePos = ""
                 nodoAnd = NodoDirecto()
-                nodoAnd.setCaracterNodo(postfixValue)
+                nodoAnd.setCaracterNodo(postfixValue.getIdenficador())
                 nodoAnd.setNodoId("")
                 nodob = self.arrayNodos.pop()
                 nodoa = self.arrayNodos.pop()
@@ -401,13 +407,14 @@ class AFNDIRECTO:
                 self.contadorGlobalV2 += 1
                 self.arrayNodos.append(nodoAnd)  # agregamos el nodo
 
-            elif(postfixValue == "*"):  # el AND NO se le coloca numero
+            elif(postfixValue.getIdenficador() == "KLEENE"):  # el AND NO se le coloca numero
                 nodoKleeneAnulable = ""
                 nodoKleenePrimeraPos = ""
                 nodoKleeneUltimaPos = ""
                 nodoKleeneSiguientePos = ""
                 nodoKleene = NodoDirecto()
-                nodoKleene.setCaracterNodo(postfixValue)
+                nodoKleene.setCaracterNodo(
+                    postfixValue.getIdenficador())
                 nodoKleene.setNodoId("")
                 nodo = self.arrayNodos.pop()
                 nodoKleeneAnulable = [nodo]
@@ -440,7 +447,7 @@ class AFNDIRECTO:
             contador += 1
             letras = self.lenguaje
             for letra in letras:
-                if(letra != str("ε")):
+                if(letra.getIdenficador() != "EPSILON"):
                     posdeLetra = self.getPosFromLetter(letra)
                     siguientePosID = []
                     for id in posdeLetra:
@@ -452,13 +459,13 @@ class AFNDIRECTO:
                         self.Destados.append(siguientePosID)
                         self.DestadosV2.append(siguientePosID)
                         self.AFDConstruidoFinal.append(
-                            [contador, estadoInterno, letra, siguientePosID])
+                            [contador, estadoInterno, letra.getNombreIdentificador(), siguientePosID])
 
                     elif(len(estadoInterno) > 0):
                         self.AFDConstruidoFinal.append(
-                            [contador, estadoInterno, letra, siguientePosID])
+                            [contador, estadoInterno, letra.getNombreIdentificador(), siguientePosID])
 
+        print(self.AFDConstruidoFinal)
         self.graficarAFD()
-        # print(self.AFDConstruidoFinal)
 
-        self.simularAFD()
+        # self.simularAFD()
