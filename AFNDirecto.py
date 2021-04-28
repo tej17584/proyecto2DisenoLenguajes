@@ -38,6 +38,24 @@ class AFNDIRECTO:
         self.AFDGraph.attr('node', shape='circle')
         self.cadenaEvaluarAFD = cadena
 
+    def getAFDDirecto(self):
+        """
+        REtorna el AFD final
+        """
+        return self.AFDConstruidoFinal
+
+    def getNodosAceptacion(self):
+        """
+        REtorna los nodos de aceptacion, el dict
+        """
+        return self.nodosAceptacion
+
+    def getdiccionarioSiguientePos(self):
+        """
+        Retorna el diccionario de la siguiente pos
+        """
+        return self.diccionarioSiguientePos
+
     def isAnulable(self, Nodos, caracter):
         if(caracter.getIdenficador() == "EPSILON"):
             return True
@@ -501,7 +519,7 @@ class AFNDIRECTO:
                         self.AFDConstruidoFinal.append(
                             [contador, estadoInterno, letra.getValueIdentificador(), siguientePosID])
 
-        print(self.AFDConstruidoFinal)
-        self.graficarAFD()
+        # print(self.AFDConstruidoFinal)
+        # self.graficarAFD()
 
-        self.simularAFD()
+        # self.simularAFD()
