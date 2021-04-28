@@ -1,10 +1,9 @@
 
-
 # Nombre: Alejandro Tejada
-# Curso: Diseño lenguajes de programacion
+# Curso: Dise�o lenguajes de programacion
 # Fecha: Abril 2021
-# Programa: scannerTejada.py
-# Propósito: Este programa tiene como fin leer el file de entrada
+# Programa: scannerProyecto2Tejada.py
+# Prop�sito: Este programa tiene como fin leer el file de entrada
 # V 1.0
 
 # imports
@@ -124,7 +123,7 @@ class Scanner():
         return array
 
     def simular(self):
-        # este método simula
+        # este m�todo simula
         print("------------------SIMULACION TOKENS INICIADA-------------------")
         S = [0]
         S2 = [0]
