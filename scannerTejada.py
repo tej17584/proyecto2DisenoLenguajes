@@ -17,7 +17,7 @@ class Scanner():
         self.diccionarioSiguientePos = {}
         self.AFDConstruidoFinal = []
         self.nodosAceptacion = {}
-        self.stringPrueba = "alejandro\r10H\r5550\r+150\r"
+        self.stringPrueba = ""
         self.abrirFiles()
         self.abrirArchivoPrueba()
         self.simular()
@@ -36,7 +36,9 @@ class Scanner():
         print("HOKISIW")
 
     def abrirArchivoPrueba(self):
-        print("")
+        with open('pruebas.txt', 'r') as f:
+            self.stringPrueba = f.read()
+        f.close()
 
     def getStateNumberForArray(self, array):
         for valor in self.AFDConstruidoFinal:
@@ -123,7 +125,7 @@ class Scanner():
 
     def simular(self):
         # este método simula
-        # print("------------------SIMULACION TOKENS INICIADA-------------------")
+        print("------------------SIMULACION TOKENS INICIADA-------------------")
         S = [0]
         S2 = [0]
         acumulador = ""
@@ -179,19 +181,7 @@ class Scanner():
             contador += 1
             popCharacter = SAcumulado.pop()
 
-        """  for x in range(len(stringPrueba)):
-            acumulador = acumulador+stringPrueba[x]
-            SAcumulado = S
-            S = self.mover(S, x)
-            if(len(S) == 0):
-                token = self.getFinalToken(SAcumulado)
-                print("El token de ", acumulador, " es: ", token) """
-        # idfinal = self.getFinalStateAFN()
-        # idEstadosFinalesAceptacion = self.getFinalStateAFNV2()
-        # print("EStado donde no se pudo mover", S)
-        # print("Id final", idfinal)
-        # print("El token de ", stringPrueba, " es: ", self.getFinalToken(S))
-        # print("---------------------------------------------------------------")
+        print("---------------------------------------------------------------")
         print("")
 
 
