@@ -124,7 +124,6 @@ class Scanner():
         infile = open("diccionarioEstadosAceptacion", 'rb')
         self.nodosAceptacion = pickle.load(infile)
         infile.close()
-        print("HOKISIW")
 
     def abrirArchivoPrueba(self):
         with open('pruebas.txt', 'r') as f:
