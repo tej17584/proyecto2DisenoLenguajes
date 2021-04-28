@@ -121,7 +121,7 @@ https://youtu.be/-H0UOibYVVI
                 ---------------------------------------------------------------
 ```
 
-## Algunos ejemplos de Diagramas. (La expresion de todas es (a|b)*abb )
+## Algunos ejemplos de Diagramas. (El File generado es del hexnumber.ATG )
 
 
 ## AFD generado con algoritmo directo
