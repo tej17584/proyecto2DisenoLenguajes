@@ -88,7 +88,7 @@ while True:
         outfile.close()
         # generamos el scanner.py
         # creamos el file del scanner.py
-        f = open("scannerProyecto2Tejada.py", "w")
+        f = open("scannerProyecto2Tejada.py", "w", encoding='utf8')
         f.write(
             """
 # Nombre: Alejandro Tejada
