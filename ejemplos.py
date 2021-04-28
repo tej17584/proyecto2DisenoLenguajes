@@ -50,7 +50,7 @@ string = 'a"(H)"b'
 s = "abcacbAUG|GAC|UGAfjdalfd"
 start = string.find('"')
 contador = start+1
-#print("Contador al inicio", contador)
+# print("Contador al inicio", contador)
 variableWhile = True
 while variableWhile:
     if(string[contador] == '"'):
@@ -58,7 +58,7 @@ while variableWhile:
     else:
         contador = contador+1
 
-#print("contador al final", contador)
+# print("contador al final", contador)
 
 
 setAny = funcioncitas.get_ANYSET()
@@ -110,5 +110,14 @@ for x in lenguaje:
     print(x.getIdenficador())
 print(f'El lenguaje es {lenguaje}')
 
-#print("el valor es ", Ident1.getIdenficador())
+# print("el valor es ", Ident1.getIdenficador())
 print(chr(34))
+
+stringA = "ab"
+setA = set(stringA)
+print(str(1) in setA)
+pp(chr(13))
+pp(chr(10))
+pp(chr(9))
+stringPrueba = "6H aa"
+print(stringPrueba[0])
