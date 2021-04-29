@@ -84,7 +84,7 @@ https://youtu.be/-H0UOibYVVI
 <br>
 
 ## UML proyecto
-![alt text](Diagrama%20UML.png "Diagrama UML")
+![alt text](/DiagramaProyecto#2.png "Diagrama UML")
 
 ## Cómo correr el proyecto
 
