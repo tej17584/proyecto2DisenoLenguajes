@@ -79,7 +79,7 @@ Algunos puntos que se tocan en este proyecto:
 
 ## Link Youtube
 ### En el video se explica TODO el funcionamiento y más ejemplos.
-https://youtu.be/-H0UOibYVVI
+https://www.youtube.com/watch?v=-uI1mENqcc4
 <br>
 <br>
 
