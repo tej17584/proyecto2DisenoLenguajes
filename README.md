@@ -83,7 +83,7 @@ https://www.youtube.com/watch?v=-uI1mENqcc4
 <br>
 <br>
 
-## UML proyecto
+## Diagrama del proyecto
 ![alt text](DiagramaProyecto2.png "Diagrama UML")
 
 ## Cómo correr el proyecto
